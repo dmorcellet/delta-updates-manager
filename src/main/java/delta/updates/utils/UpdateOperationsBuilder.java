@@ -6,28 +6,36 @@ import java.util.Objects;
 import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.FileDescription;
+import delta.updates.engine.operations.OperationType;
+import delta.updates.engine.operations.UpdateOperation;
+import delta.updates.engine.operations.UpdateOperations;
 
 /**
- * Differences builder.
+ * Builds update operations to update an entry to another.
  * @author DAM
  */
-public class DiffBuilder
+public class UpdateOperationsBuilder
 {
+  private UpdateOperations _operations;
+
   /**
-   * Recursively compute differences between 2 entries.
+   * Recursively compute update operations between 2 entries.
    * @param entry1 Entry 1.
    * @param entry2 Entry 2.
+   * @return the computed operations.
    */
-  public void computeDiff(DirectoryEntryDescription entry1, DirectoryEntryDescription entry2)
+  public UpdateOperations computeDiff(DirectoryEntryDescription entry1, DirectoryEntryDescription entry2)
   {
+    _operations=new UpdateOperations();
     boolean namesAreEqual=Objects.equals(entry1.getName(),entry2.getName());
     if (!namesAreEqual)
     {
       remove(entry1);
       add(entry2);
-      return;
+      return _operations;
     }
     handleEntries(entry1,entry2);
+    return _operations;
   }
 
   /**
@@ -109,16 +117,38 @@ public class DiffBuilder
 
   private void remove(DirectoryEntryDescription d)
   {
-    System.out.println("Remove entry: "+d);
+    if (d instanceof DirectoryDescription)
+    {
+      DirectoryDescription directory=(DirectoryDescription)d;
+      for(DirectoryEntryDescription childEntry : directory.getEntries())
+      {
+        remove(childEntry);
+      }
+    }
+    UpdateOperation operation=new UpdateOperation(OperationType.DELETE,d);
+    _operations.addOperation(operation);
+    //System.out.println("Remove entry: "+d);
   }
 
   private void add(DirectoryEntryDescription d)
   {
-    System.out.println("Add entry: "+d);
+    if (d instanceof DirectoryDescription)
+    {
+      DirectoryDescription directory=(DirectoryDescription)d;
+      for(DirectoryEntryDescription childEntry : directory.getEntries())
+      {
+        add(childEntry);
+      }
+    }
+    UpdateOperation operation=new UpdateOperation(OperationType.ADD,d);
+    _operations.addOperation(operation);
+    //System.out.println("Add entry: "+d);
   }
 
   private void update(FileDescription file)
   {
+    UpdateOperation operation=new UpdateOperation(OperationType.UPDATE,file);
+    _operations.addOperation(operation);
     System.out.println("Update entry: "+file);
   }
 }
