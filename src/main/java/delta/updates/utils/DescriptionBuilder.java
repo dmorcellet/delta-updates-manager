@@ -28,7 +28,12 @@ public class DescriptionBuilder
     {
       return null;
     }
-    return buildEntry(input);
+    DirectoryEntryDescription result=buildEntry(input);
+    if (input.isDirectory())
+    {
+      result.setName(".");
+    }
+    return result;
   }
 
   private DirectoryEntryDescription buildEntry(File entry)
