@@ -30,6 +30,8 @@ public class HttpProvider
   public HttpProvider(Downloader downloader, String rootURL, File toDir)
   {
     _downloader=downloader;
+    _rootURL=rootURL;
+    _toDir=toDir;
   }
 
   /**
