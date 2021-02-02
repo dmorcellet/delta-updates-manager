@@ -21,15 +21,15 @@ public class SoftwarePackageXmlIOTest extends TestCase
   {
     // Write
     DescriptionBuilder builder=new DescriptionBuilder();
-    File currentDir=new File(".");
-    DirectoryEntryDescription description=builder.build(currentDir);
+    File from=new File("D:/shared/damien/dev/lotrocompanion/releases/14.0/LotRO Companion/app");
+    DirectoryEntryDescription description=builder.build(from);
     SoftwarePackage softwarePackage=new SoftwarePackage();
-    softwarePackage.setName("Test");
-    softwarePackage.setVersion(2100);
-    softwarePackage.setVersionLabel("2.1.0");
-    softwarePackage.setDescription("A simple test package");
+    softwarePackage.setName("LotroCompanion");
+    softwarePackage.setVersion(1400);
+    softwarePackage.setVersionLabel("14.0 Update 28.2.1");
+    softwarePackage.setDescription("Lotro Companion 14.0 with data of Update 28.2.1");
     softwarePackage.setFiles(description);
-    File file=new File("package.xml");
+    File file=new File("lotrocompanion.xml");
     SoftwarePackageXmlIO.writeFile(file,softwarePackage);
     // Read
     SoftwarePackage softwarePackage2=SoftwarePackageXmlIO.parseFile(file);

@@ -41,27 +41,15 @@ public class UpdateEngine
 
   /**
    * Perform update.
+   * @param softwarePackage Software package.
    */
-  public void doIt()
+  public void doIt(SoftwarePackage softwarePackage)
   {
-    // Fetch package description
-    SoftwarePackage softwarePackage=getSoftwarePackage();
     // Update
     update(softwarePackage);
     // Cleanup
     FilesDeleter deleter=new FilesDeleter(_tmpDir,null,true);
     deleter.doIt();
-  }
-
-  private SoftwarePackage getSoftwarePackage()
-  {
-    // TODO Otherwise
-    File from=new File("D:/shared/damien/dev/lotrocompanion/releases/14.0/LotRO Companion/app");
-    DescriptionBuilder builder=new DescriptionBuilder();
-    DirectoryEntryDescription files=builder.build(from);
-    SoftwarePackage softwarePackage=new SoftwarePackage();
-    softwarePackage.setFiles(files);
-    return softwarePackage;
   }
 
   private void update(SoftwarePackage target)
