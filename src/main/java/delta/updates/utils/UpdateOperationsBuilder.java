@@ -149,6 +149,6 @@ public class UpdateOperationsBuilder
   {
     UpdateOperation operation=new UpdateOperation(OperationType.UPDATE,file);
     _operations.addOperation(operation);
-    System.out.println("Update entry: "+file);
+    //System.out.println("Update entry: "+file);
   }
 }

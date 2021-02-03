@@ -52,7 +52,7 @@ public class HttpProvider
     String path=EntryUtils.getPath(entry);
     String fullUrl=_rootURL+"/"+encodePath(path);
     File toFile=new File(_toDir,path);
-    System.out.println("Downloading: "+path+" from "+fullUrl+" to "+toFile);
+    LOGGER.info("Downloading: "+path+" from "+fullUrl+" to "+toFile);
     toFile.getParentFile().mkdirs();
     boolean ok=false;
     try

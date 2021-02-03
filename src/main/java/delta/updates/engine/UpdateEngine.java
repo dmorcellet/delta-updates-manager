@@ -2,6 +2,8 @@ package delta.updates.engine;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import delta.common.utils.files.FilesDeleter;
 import delta.downloads.Downloader;
 import delta.updates.data.DirectoryDescription;
@@ -21,6 +23,8 @@ import delta.updates.utils.UpdateOperationsBuilder;
  */
 public class UpdateEngine
 {
+  private static final Logger LOGGER=Logger.getLogger(UpdateEngine.class);
+
   private Downloader _downloader;
   private HttpProvider _provider;
   private File _tmpDir;
@@ -90,7 +94,7 @@ public class UpdateEngine
           boolean ok=_provider.getFile(entry);
           if (!ok)
           {
-            System.out.println("Failed: "+path);
+            LOGGER.error("Failed: "+path);
           }
         }
       }
