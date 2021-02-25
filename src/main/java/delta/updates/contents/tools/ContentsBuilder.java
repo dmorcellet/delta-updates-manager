@@ -62,7 +62,7 @@ public class ContentsBuilder
   public void doIt()
   {
     _contentsMgr=new ContentsManager();
-    DirectoryEntryDescription files=_package.getFiles();
+    DirectoryEntryDescription files=_package.getRootEntry();
     handleDirectoryEntry(files);
     File contentsMgrFile=new File("contents.xml");
     ContentsXmlIO.writeFile(contentsMgrFile,_contentsMgr);
@@ -117,7 +117,11 @@ public class ContentsBuilder
     String path=EntryUtils.getPath(directoryEntry);
     if (_pathsToArchive.contains(path))
     {
-      buildArchivedContents(directoryEntry);
+      ContentsDescription contents=buildArchivedContents(directoryEntry);
+      if (contents!=null)
+      {
+        _contentsMgr.addContents(contents);
+      }
     }
     else
     {
@@ -163,7 +167,7 @@ public class ContentsBuilder
     }
     // Setup contents data
     DescriptionBuilder.fillFileEntry(archiveFile,toFile);
-    // TODO Add child files
+    ret.addEntry(sourceDescription);
     return ret;
   }
 

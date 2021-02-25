@@ -20,14 +20,6 @@ public class ContentsXMLConstants
    */
   public static final String ARCHIVE_TAG="archive";
   /**
-   * Tag 'from'.
-   */
-  public static final String FROM_TAG="from";
-  /**
-   * Tag 'file'.
-   */
-  public static final String FILE_TAG="file";
-  /**
    * Tag 'from','file', attribute 'path'.
    */
   public static final String FILE_PATH_ATTR="path";

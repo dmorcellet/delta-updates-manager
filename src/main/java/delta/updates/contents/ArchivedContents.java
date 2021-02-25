@@ -3,7 +3,7 @@ package delta.updates.contents;
 import java.util.ArrayList;
 import java.util.List;
 
-import delta.updates.data.FileDescription;
+import delta.updates.data.DirectoryEntryDescription;
 
 /**
  * Archived contents description.
@@ -12,9 +12,9 @@ import delta.updates.data.FileDescription;
 public class ArchivedContents extends ContentsDescription
 {
   /**
-   * Archived files, at least one!
+   * Archived entries, at least one!
    */
-  private List<FileDescription> _files;
+  private List<DirectoryEntryDescription> _entries;
 
   /**
    * Constructor.
@@ -22,24 +22,24 @@ public class ArchivedContents extends ContentsDescription
   public ArchivedContents()
   {
     super();
-    _files=new ArrayList<FileDescription>();
+    _entries=new ArrayList<DirectoryEntryDescription>();
   }
 
   /**
-   * Add a content file.
-   * @param file File to add.
+   * Add a content entry.
+   * @param entry Entry to add.
    */
-  public void addFile(FileDescription file)
+  public void addEntry(DirectoryEntryDescription entry)
   {
-    _files.add(file);
+    _entries.add(entry);
   }
 
   /**
-   * Get the files in this archive.
-   * @return A list of files.
+   * Get the entries in this archive.
+   * @return A list of entries.
    */
-  public List<FileDescription> getFiles()
+  public List<DirectoryEntryDescription> getEntries()
   {
-    return new ArrayList<FileDescription>(_files);
+    return new ArrayList<DirectoryEntryDescription>(_entries);
   }
 }

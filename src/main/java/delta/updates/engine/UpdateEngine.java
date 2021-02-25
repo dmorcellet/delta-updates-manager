@@ -65,7 +65,7 @@ public class UpdateEngine
     DescriptionBuilder builder=new DescriptionBuilder();
     DirectoryEntryDescription to=builder.build(_toDir);
     UpdateOperationsBuilder updatesBuilder=new UpdateOperationsBuilder();
-    UpdateOperations operations=updatesBuilder.computeDiff(to,target.getFiles());
+    UpdateOperations operations=updatesBuilder.computeDiff(to,target.getRootEntry());
     handleOperations(operations);
   }
 

@@ -28,7 +28,7 @@ public class SoftwarePackageXmlIOTest extends TestCase
     softwarePackage.setVersion(1400);
     softwarePackage.setVersionLabel("14.0 Update 28.2.1");
     softwarePackage.setDescription("Lotro Companion 14.0 with data of Update 28.2.1");
-    softwarePackage.setFiles(description);
+    softwarePackage.setRootEntry(description);
     File file=new File("lotrocompanion.xml");
     SoftwarePackageXmlIO.writeFile(file,softwarePackage);
     // Read

@@ -71,6 +71,28 @@ public class DirectoryDescription extends DirectoryEntryDescription
     return ret;
   }
 
+  /**
+   * Get all files in this directory (recursively).
+   * @return A possibly empty but never <code>null</code> list of file descriptions.
+   */
+  public List<FileDescription> getAllFiles()
+  {
+    List<FileDescription> ret=new ArrayList<FileDescription>();
+    for(DirectoryEntryDescription entry : _entries)
+    {
+      if (entry instanceof FileDescription)
+      {
+        ret.add((FileDescription)entry);
+      }
+      else if (entry instanceof DirectoryDescription)
+      {
+        DirectoryDescription directory=(DirectoryDescription)entry;
+        ret.addAll(directory.getAllFiles());
+      }
+    }
+    return ret;
+  }
+
   @Override
   public String toString()
   {

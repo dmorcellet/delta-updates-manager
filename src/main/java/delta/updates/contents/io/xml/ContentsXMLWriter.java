@@ -10,8 +10,10 @@ import delta.updates.contents.ArchivedContents;
 import delta.updates.contents.ContentsDescription;
 import delta.updates.contents.ContentsManager;
 import delta.updates.contents.RawContents;
+import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
+import delta.updates.data.io.xml.DirectoryEntriesXMLWriter;
 
 /**
  * Writes contents descriptions to XML files.
@@ -55,27 +57,28 @@ public class ContentsXMLWriter
 
   private static void writeRawFile(TransformerHandler hd, RawContents rawContents) throws SAXException
   {
-    hd.startElement("","",ContentsXMLConstants.RAW_FILE_TAG,new AttributesImpl());
+    AttributesImpl attrs=new AttributesImpl();
     FileDescription source=rawContents.getDataFile();
-    writeFile(hd,ContentsXMLConstants.FROM_TAG,source);
+    writeFileAttrs(hd,attrs,source);
+    hd.startElement("","",ContentsXMLConstants.RAW_FILE_TAG,attrs);
     hd.endElement("","",ContentsXMLConstants.RAW_FILE_TAG);
   }
 
   private static void writeArchive(TransformerHandler hd, ArchivedContents archivedContents) throws SAXException
   {
-    hd.startElement("","",ContentsXMLConstants.ARCHIVE_TAG,new AttributesImpl());
+    AttributesImpl attrs=new AttributesImpl();
     FileDescription source=archivedContents.getDataFile();
-    writeFile(hd,ContentsXMLConstants.FROM_TAG,source);
-    for(FileDescription childFile : archivedContents.getFiles())
+    writeFileAttrs(hd,attrs,source);
+    hd.startElement("","",ContentsXMLConstants.ARCHIVE_TAG,attrs);
+    for(DirectoryEntryDescription entry : archivedContents.getEntries())
     {
-      writeFile(hd,ContentsXMLConstants.FILE_TAG,childFile);
+      DirectoryEntriesXMLWriter.writeEntry(hd,entry);
     }
     hd.endElement("","",ContentsXMLConstants.ARCHIVE_TAG);
   }
 
-  private static void writeFile(TransformerHandler hd, String tagName, FileDescription file) throws SAXException
+  private static void writeFileAttrs(TransformerHandler hd, AttributesImpl attrs, FileDescription file)
   {
-    AttributesImpl attrs=new AttributesImpl();
     // path
     String path=EntryUtils.getPath(file);
     attrs.addAttribute("","",ContentsXMLConstants.FILE_PATH_ATTR,XmlWriter.CDATA,path);
@@ -85,7 +88,5 @@ public class ContentsXMLWriter
     // CRC
     long crc=file.getCRC();
     attrs.addAttribute("","",ContentsXMLConstants.FILE_CRC_ATTR,XmlWriter.CDATA,String.valueOf(crc));
-    hd.startElement("","",tagName,attrs);
-    hd.endElement("","",tagName);
   }
 }

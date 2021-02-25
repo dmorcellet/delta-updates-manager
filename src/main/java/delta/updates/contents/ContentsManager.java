@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import delta.updates.data.DirectoryDescription;
+import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
 
@@ -53,21 +55,44 @@ public class ContentsManager
   private void addRawContents(RawContents contents)
   {
     FileDescription file=contents.getDataFile();
-    registerItem(file,contents);
+    registerItem(null,file,contents);
   }
 
   private void addArchivedContents(ArchivedContents contents)
   {
-    for(FileDescription archivedItem : contents.getFiles())
+    DirectoryDescription parent=contents.getDataFile().getParent();
+    String parentPath=EntryUtils.getPath(parent);
+    for(DirectoryEntryDescription entry : contents.getEntries())
     {
-      registerItem(archivedItem,contents);
+      registerEntry(parentPath,entry,contents);
     }
   }
 
-  private void registerItem(FileDescription file, ContentsDescription contents)
+  private void registerEntry(String parentPath, DirectoryEntryDescription entry, ContentsDescription contents)
   {
-    String key=EntryUtils.getPath(file);
+    if (entry instanceof FileDescription)
+    {
+      registerItem(parentPath,(FileDescription)entry,contents);
+    }
+    else if (entry instanceof DirectoryDescription)
+    {
+      registerDirectory(parentPath,(DirectoryDescription)entry,contents);
+    }
+  }
+
+  private void registerItem(String parentPath, FileDescription file, ContentsDescription contents)
+  {
+    String childPath=EntryUtils.getPath(file);
+    String key=EntryUtils.concatPath(parentPath,childPath);
     _filePathsToContents.put(key,contents);
+  }
+
+  private void registerDirectory(String parentPath, DirectoryDescription directory, ContentsDescription contents)
+  {
+    for(DirectoryEntryDescription entry : directory.getEntries())
+    {
+      registerEntry(parentPath,entry,contents);
+    }
   }
 
   /**

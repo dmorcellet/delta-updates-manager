@@ -50,7 +50,7 @@ public class SoftwarePackageXMLWriter
     }
     hd.startElement("","",SoftwarePackageXMLConstants.PACKAGE_TAG,attrs);
     // Files
-    DirectoryEntryDescription entry=softwarePackage.getFiles();
+    DirectoryEntryDescription entry=softwarePackage.getRootEntry();
     DirectoryEntriesXMLWriter.writeEntry(hd,entry);
     hd.endElement("","",SoftwarePackageXMLConstants.PACKAGE_TAG);
   }

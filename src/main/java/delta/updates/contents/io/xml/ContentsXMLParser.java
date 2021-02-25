@@ -11,8 +11,10 @@ import delta.updates.contents.ArchivedContents;
 import delta.updates.contents.ContentsDescription;
 import delta.updates.contents.ContentsManager;
 import delta.updates.contents.RawContents;
+import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntriesBuilder;
 import delta.updates.data.FileDescription;
+import delta.updates.data.io.xml.DirectoryEntriesXMLParser;
 
 /**
  * Parser for contents descriptions stored in XML.
@@ -66,8 +68,7 @@ public class ContentsXMLParser
 
   private static RawContents parseRawFileTag(Element rawFileTag, EntriesBuilder entriesBuilder)
   {
-    Element fromTag=DOMParsingTools.getChildTagByName(rawFileTag,ContentsXMLConstants.FROM_TAG);
-    FileDescription source=parseFileTag(fromTag,entriesBuilder);
+    FileDescription source=parseFileAttrs(rawFileTag,entriesBuilder);
     RawContents ret=new RawContents();
     ret.setDataFile(source);
     return ret;
@@ -75,26 +76,24 @@ public class ContentsXMLParser
 
   private static ArchivedContents parseArchiveTag(Element archiveTag, EntriesBuilder entriesBuilder)
   {
-    Element fromTag=DOMParsingTools.getChildTagByName(archiveTag,ContentsXMLConstants.FROM_TAG);
-    FileDescription source=parseFileTag(fromTag,entriesBuilder);
+    FileDescription source=parseFileAttrs(archiveTag,entriesBuilder);
     ArchivedContents ret=new ArchivedContents();
     ret.setDataFile(source);
     // Children
-    List<Element> childTags=DOMParsingTools.getChildTagsByName(archiveTag,ContentsXMLConstants.FILE_TAG);
+    List<Element> childTags=DOMParsingTools.getChildTags(archiveTag);
     for(Element childTag : childTags)
     {
-      FileDescription childFile=parseFileTag(childTag,entriesBuilder);
-      ret.addFile(childFile);
+      DirectoryEntryDescription entry=DirectoryEntriesXMLParser.parseEntry(childTag);
+      ret.addEntry(entry);
     }
     return ret;
   }
 
-  private static FileDescription parseFileTag(Element fileTag, EntriesBuilder entriesBuilder)
+  private static FileDescription parseFileAttrs(Element fileTag, EntriesBuilder entriesBuilder)
   {
     NamedNodeMap attrs=fileTag.getAttributes();
     // Path
     String path=DOMParsingTools.getStringAttribute(attrs,ContentsXMLConstants.FILE_PATH_ATTR,"");
-
     FileDescription file=entriesBuilder.buildFileFromPath(path);
     // Size
     long size=DOMParsingTools.getLongAttribute(attrs,ContentsXMLConstants.FILE_SIZE_ATTR,0);

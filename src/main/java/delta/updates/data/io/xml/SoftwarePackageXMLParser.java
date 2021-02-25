@@ -45,7 +45,7 @@ public class SoftwarePackageXMLParser
     if (count==1)
     {
       DirectoryEntryDescription entry=DirectoryEntriesXMLParser.parseEntry(childTags.get(0));
-      ret.setFiles(entry);
+      ret.setRootEntry(entry);
     }
     else
     {

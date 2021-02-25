@@ -31,7 +31,7 @@ public class EntriesBuilder
     {
       return ret;
     }
-    int index=path.indexOf(Constants.PATH_ENTRY_SEPARATOR);
+    int index=path.lastIndexOf(Constants.PATH_ENTRY_SEPARATOR);
     if (index!=-1)
     {
       String parentPath=path.substring(0,index);
@@ -58,7 +58,7 @@ public class EntriesBuilder
   public FileDescription buildFileFromPath(String path)
   {
     FileDescription ret;
-    int index=path.indexOf(Constants.PATH_ENTRY_SEPARATOR);
+    int index=path.lastIndexOf(Constants.PATH_ENTRY_SEPARATOR);
     if (index!=-1)
     {
       String parentPath=path.substring(0,index);

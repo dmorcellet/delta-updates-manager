@@ -10,7 +10,7 @@ public class SoftwarePackage
   private int _version;
   private String _versionLabel;
   private String _description;
-  private DirectoryEntryDescription _files;
+  private DirectoryEntryDescription _rootEntry;
 
   /**
    * Constructor.
@@ -108,21 +108,21 @@ public class SoftwarePackage
   }
 
   /**
-   * Get the description of the files that make up this package.
-   * @return a description of files.
+   * Get the description of the root entry for this package.
+   * @return an entry description.
    */
-  public DirectoryEntryDescription getFiles()
+  public DirectoryEntryDescription getRootEntry()
   {
-    return _files;
+    return _rootEntry;
   }
 
   /**
    * Set the description of the files that make up this package.
-   * @param files Files description.
+   * @param rootEntry Root entry description.
    */
-  public void setFiles(DirectoryEntryDescription files)
+  public void setRootEntry(DirectoryEntryDescription rootEntry)
   {
-    _files=files;
+    _rootEntry=rootEntry;
   }
 
   @Override

@@ -21,4 +21,19 @@ public class EntryUtils
     String parentPath=getPath(parent);
     return parentPath+Constants.PATH_ENTRY_SEPARATOR+entry.getName();
   }
+
+  /**
+   * Concatenate 2 paths.
+   * @param path1 Parent path.
+   * @param path2 Child path.
+   * @return A path.
+   */
+  public static String concatPath(String path1, String path2)
+  {
+    if ((path1!=null) && (path1.length()>0))
+    {
+      return path1+Constants.PATH_ENTRY_SEPARATOR+path2;
+    }
+    return path2;
+  }
 }
