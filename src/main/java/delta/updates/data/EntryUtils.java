@@ -19,6 +19,6 @@ public class EntryUtils
       return entry.getName();
     }
     String parentPath=getPath(parent);
-    return parentPath+"/"+entry.getName();
+    return parentPath+Constants.PATH_ENTRY_SEPARATOR+entry.getName();
   }
 }
