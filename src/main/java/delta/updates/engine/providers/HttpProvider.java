@@ -6,32 +6,29 @@ import org.apache.log4j.Logger;
 
 import delta.downloads.DownloadException;
 import delta.downloads.Downloader;
-import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
+import delta.updates.data.FileDescription;
 
 /**
  * Data provider that downloads data using HTTP.
  * @author DAM
  */
-public class HttpProvider
+public class HttpProvider implements FileProvider
 {
   private static final Logger LOGGER=Logger.getLogger(HttpProvider.class);
 
   private Downloader _downloader;
   private String _rootURL;
-  private File _toDir;
 
   /**
    * Constructor.
    * @param downloader Downloader.
    * @param rootURL Root URL for downloads.
-   * @param toDir Target directory for downloaded files.
    */
-  public HttpProvider(Downloader downloader, String rootURL, File toDir)
+  public HttpProvider(Downloader downloader, String rootURL)
   {
     _downloader=downloader;
     _rootURL=rootURL;
-    _toDir=toDir;
   }
 
   /**
@@ -39,19 +36,15 @@ public class HttpProvider
    * @param entry Entry to use.
    * @return <code>true</code> if download was successfull, <code>false</code> otherwise.
    */
-  public boolean getFile(DirectoryEntryDescription entry)
+  public boolean getFile(FileDescription entry, File toDir)
   {
     if (_rootURL==null)
     {
       return false;
     }
-    if (_toDir==null)
-    {
-      return false;
-    }
     String path=EntryUtils.getPath(entry);
     String fullUrl=_rootURL+"/"+encodePath(path);
-    File toFile=new File(_toDir,path);
+    File toFile=new File(toDir,path);
     LOGGER.info("Downloading: "+path+" from "+fullUrl+" to "+toFile);
     toFile.getParentFile().mkdirs();
     boolean ok=false;

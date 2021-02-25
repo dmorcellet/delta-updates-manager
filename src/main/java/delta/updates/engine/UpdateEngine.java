@@ -5,15 +5,15 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import delta.common.utils.files.FilesDeleter;
-import delta.downloads.Downloader;
 import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
+import delta.updates.data.FileDescription;
 import delta.updates.data.SoftwarePackage;
 import delta.updates.engine.operations.OperationType;
 import delta.updates.engine.operations.UpdateOperation;
 import delta.updates.engine.operations.UpdateOperations;
-import delta.updates.engine.providers.HttpProvider;
+import delta.updates.engine.providers.FileProvider;
 import delta.updates.utils.DescriptionBuilder;
 import delta.updates.utils.UpdateOperationsBuilder;
 
@@ -25,22 +25,20 @@ public class UpdateEngine
 {
   private static final Logger LOGGER=Logger.getLogger(UpdateEngine.class);
 
-  private Downloader _downloader;
-  private HttpProvider _provider;
   private File _tmpDir;
   private File _toDir;
+  private FileProvider _provider;
 
   /**
    * Constructor.
    * @param toDir Directory of data to update.
-   * @param rootUrl Source URL for updates.
+   * @param provider File provider.
    */
-  public UpdateEngine(File toDir, String rootUrl)
+  public UpdateEngine(File toDir, FileProvider provider)
   {
     _toDir=toDir;
+    _provider=provider;
     _tmpDir=new File(_toDir,"__tmp");
-    _downloader=new Downloader();
-    _provider=new HttpProvider(_downloader,rootUrl,_tmpDir);
   }
 
   /**
@@ -91,7 +89,7 @@ public class UpdateEngine
         }
         else
         {
-          boolean ok=_provider.getFile(entry);
+          boolean ok=_provider.getFile((FileDescription)entry,_tmpDir);
           if (!ok)
           {
             LOGGER.error("Failed: "+path);
