@@ -72,10 +72,20 @@ public class DescriptionBuilder
   private FileDescription buildFile(File file)
   {
     FileDescription ret=new FileDescription();
-    ret.setName(file.getName());
-    ret.setSize(file.length());
-    long crc=CRC.computeCRC(file);
-    ret.setCRC(crc);
+    fillFileEntry(ret,file);
     return ret;
+  }
+
+  /**
+   * Fill the given description with the attributes from the given file.
+   * @param storage Description to use.
+   * @param from Source file.
+   */
+  public static void fillFileEntry(FileDescription storage, File from)
+  {
+    storage.setName(from.getName());
+    storage.setSize(from.length());
+    long crc=CRC.computeCRC(from);
+    storage.setCRC(crc);
   }
 }
