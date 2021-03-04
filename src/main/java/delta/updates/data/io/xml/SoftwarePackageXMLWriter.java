@@ -8,6 +8,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import delta.common.utils.io.xml.XmlWriter;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.SoftwarePackage;
+import delta.updates.data.SoftwarePackageSummary;
 
 /**
  * Writes software packages to XML files.
@@ -24,26 +25,27 @@ public class SoftwarePackageXMLWriter
   public static void writeSoftwarePackage(TransformerHandler hd, SoftwarePackage softwarePackage) throws SAXException
   {
     AttributesImpl attrs=new AttributesImpl();
+    SoftwarePackageSummary summary=softwarePackage.getSummary();
     // Name
-    String name=softwarePackage.getName();
+    String name=summary.getName();
     if (name.length()>0)
     {
       attrs.addAttribute("","",SoftwarePackageXMLConstants.PACKAGE_NAME_ATTR,XmlWriter.CDATA,name);
     }
     // Version
-    int version=softwarePackage.getVersion();
+    int version=summary.getVersion();
     if (version!=0)
     {
       attrs.addAttribute("","",SoftwarePackageXMLConstants.VERSION_ATTR,XmlWriter.CDATA,String.valueOf(version));
     }
     // Version label
-    String versionLabel=softwarePackage.getVersionLabel();
+    String versionLabel=summary.getVersionLabel();
     if (versionLabel.length()>0)
     {
       attrs.addAttribute("","",SoftwarePackageXMLConstants.VERSION_LABEL_ATTR,XmlWriter.CDATA,versionLabel);
     }
     // Description
-    String description=softwarePackage.getDescription();
+    String description=summary.getDescription();
     if (description.length()>0)
     {
       attrs.addAttribute("","",SoftwarePackageXMLConstants.DESCRIPTION_ATTR,XmlWriter.CDATA,description);
