@@ -31,6 +31,36 @@ public class DirectoryDescription extends DirectoryEntryDescription
   }
 
   /**
+   * Remove an entry using its name.
+   * @param name Name of entry to remove.
+   */
+  public void removeEntry(String name)
+  {
+    DirectoryEntryDescription entry=findByName(name);
+    if (entry!=null)
+    {
+      _entries.remove(entry);
+    }
+  }
+
+  /**
+   * Find an entry using its name.
+   * @param name Name to find.
+   * @return An entry or <code>null</code> if not found.
+   */
+  public DirectoryEntryDescription findByName(String name)
+  {
+    for(DirectoryEntryDescription entry : _entries)
+    {
+      if (entry.getName().equals(name))
+      {
+        return entry;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Get all the managed entries.
    * @return a list of entries.
    */
