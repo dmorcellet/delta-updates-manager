@@ -8,7 +8,7 @@ import delta.downloads.Downloader;
  * Test download from SourceForge.
  * @author DAM
  */
-public class Test
+public class MainTestSourceForgeDownload
 {
   /**
    * Main method for this test.

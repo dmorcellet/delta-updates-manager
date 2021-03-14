@@ -1,4 +1,4 @@
-package delta.updates.utils;
+package delta.updates.engine;
 
 import java.io.File;
 
@@ -6,6 +6,7 @@ import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.engine.UpdateOperationsBuilder;
 import delta.updates.engine.operations.UpdateOperation;
 import delta.updates.engine.operations.UpdateOperations;
+import delta.updates.utils.DescriptionBuilder;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 

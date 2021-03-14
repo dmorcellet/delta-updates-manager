@@ -1,4 +1,4 @@
-package delta.updates.contents.tools;
+package delta.updates.tools;
 
 import java.io.File;
 
