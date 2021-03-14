@@ -1,4 +1,4 @@
-package delta.updates.contents;
+package delta.updates.data;
 
 /**
  * Raw contents description.

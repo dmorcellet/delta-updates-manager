@@ -3,6 +3,7 @@ package delta.updates.utils;
 import java.io.File;
 
 import delta.updates.data.DirectoryEntryDescription;
+import delta.updates.engine.UpdateOperationsBuilder;
 import delta.updates.engine.operations.UpdateOperation;
 import delta.updates.engine.operations.UpdateOperations;
 import junit.framework.Assert;

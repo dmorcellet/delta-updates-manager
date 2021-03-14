@@ -9,13 +9,11 @@ import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
-import delta.updates.data.SoftwarePackage;
 import delta.updates.engine.operations.OperationType;
 import delta.updates.engine.operations.UpdateOperation;
 import delta.updates.engine.operations.UpdateOperations;
 import delta.updates.engine.providers.FileProvider;
 import delta.updates.utils.DescriptionBuilder;
-import delta.updates.utils.UpdateOperationsBuilder;
 
 /**
  * Update engine.
@@ -43,18 +41,18 @@ public class UpdateEngine
 
   /**
    * Perform update.
-   * @param softwarePackage Software package.
+   * @param target Target description.
    */
-  public void doIt(SoftwarePackage softwarePackage)
+  public void doIt(DirectoryEntryDescription target)
   {
     // Update
-    update(softwarePackage);
+    update(target);
     // Cleanup
     FilesDeleter deleter=new FilesDeleter(_tmpDir,null,true);
     deleter.doIt();
   }
 
-  private void update(SoftwarePackage target)
+  private void update(DirectoryEntryDescription target)
   {
     if (!_toDir.exists())
     {
@@ -63,7 +61,7 @@ public class UpdateEngine
     DescriptionBuilder builder=new DescriptionBuilder();
     DirectoryEntryDescription to=builder.build(_toDir);
     UpdateOperationsBuilder updatesBuilder=new UpdateOperationsBuilder();
-    UpdateOperations operations=updatesBuilder.computeDiff(to,target.getRootEntry());
+    UpdateOperations operations=updatesBuilder.computeDiff(to,target);
     handleOperations(operations);
   }
 

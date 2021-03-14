@@ -1,4 +1,4 @@
-package delta.updates.contents.io.xml;
+package delta.updates.data.io.xml;
 
 /**
  * Constants for tags and attribute names used in the
@@ -7,10 +7,6 @@ package delta.updates.contents.io.xml;
  */
 public class ContentsXMLConstants
 {
-  /**
-   * Tag 'contents'.
-   */
-  public static final String CONTENTS_TAG="contents";
   /**
    * Tag 'rawFile'.
    */

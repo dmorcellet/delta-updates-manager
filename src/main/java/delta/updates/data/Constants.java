@@ -1,7 +1,8 @@
 package delta.updates.data;
 
 /**
- * @author dm
+ * Some constants.
+ * @author DAM
  */
 public class Constants
 {

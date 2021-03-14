@@ -1,4 +1,4 @@
-package delta.updates.contents.io.xml;
+package delta.updates.data.io.xml;
 
 import java.util.List;
 
@@ -7,14 +7,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 import delta.common.utils.xml.DOMParsingTools;
-import delta.updates.contents.ArchivedContents;
-import delta.updates.contents.ContentsDescription;
-import delta.updates.contents.ContentsManager;
-import delta.updates.contents.RawContents;
+import delta.updates.data.ArchivedContents;
+import delta.updates.data.ContentsDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntriesBuilder;
 import delta.updates.data.FileDescription;
-import delta.updates.data.io.xml.DirectoryEntriesXMLParser;
+import delta.updates.data.RawContents;
 
 /**
  * Parser for contents descriptions stored in XML.
@@ -25,24 +23,14 @@ public class ContentsXMLParser
   private static final Logger LOGGER=Logger.getLogger(ContentsXMLParser.class);
 
   /**
-   * Build a directory entry from an XML tag.
+   * Build a contents description from an XML tag.
    * @param root Root XML tag.
-   * @return A directory entry.
+   * @return A contents description or <code>null</code>.
    */
-  public static ContentsManager parseContentsManager(Element root)
+  public static ContentsDescription parseContentsDescriptionTag(Element root)
   {
     EntriesBuilder entriesBuilder=new EntriesBuilder();
-    ContentsManager contentsMgr=new ContentsManager();
-    List<Element> childTags=DOMParsingTools.getChildTags(root);
-    for(Element childTag : childTags)
-    {
-      ContentsDescription contents=parseContentsDescriptionTag(childTag,entriesBuilder);
-      if (contents!=null)
-      {
-        contentsMgr.addContents(contents);
-      }
-    }
-    return contentsMgr;
+    return parseContentsDescriptionTag(root,entriesBuilder);
   }
 
   /**

@@ -1,4 +1,4 @@
-package delta.updates.contents.io.xml;
+package delta.updates.data.io.xml;
 
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -6,14 +6,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import delta.common.utils.io.xml.XmlWriter;
-import delta.updates.contents.ArchivedContents;
-import delta.updates.contents.ContentsDescription;
-import delta.updates.contents.ContentsManager;
-import delta.updates.contents.RawContents;
+import delta.updates.data.ArchivedContents;
+import delta.updates.data.ContentsDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
-import delta.updates.data.io.xml.DirectoryEntriesXMLWriter;
+import delta.updates.data.RawContents;
 
 /**
  * Writes contents descriptions to XML files.
@@ -21,22 +19,6 @@ import delta.updates.data.io.xml.DirectoryEntriesXMLWriter;
  */
 public class ContentsXMLWriter
 {
-  /**
-   * Write a contents manager to the given output.
-   * @param hd Output.
-   * @param contentsMgr Contents to write.
-   * @throws SAXException If an error occurs.
-   */
-  public static void writeContentsManager(TransformerHandler hd, ContentsManager contentsMgr) throws SAXException
-  {
-    hd.startElement("","",ContentsXMLConstants.CONTENTS_TAG,new AttributesImpl());
-    for(ContentsDescription contents : contentsMgr.getContents())
-    {
-      writeContents(hd,contents);
-    }
-    hd.endElement("","",ContentsXMLConstants.CONTENTS_TAG);
-  }
-
   /**
    * Write a contents description to the given output.
    * @param hd Output.

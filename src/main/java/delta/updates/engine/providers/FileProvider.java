@@ -5,7 +5,8 @@ import java.io.File;
 import delta.updates.data.FileDescription;
 
 /**
- * @author dm
+ * Interface of a file provider.
+ * @author DAM
  */
 public interface FileProvider
 {

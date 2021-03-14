@@ -1,9 +1,7 @@
-package delta.updates.contents;
+package delta.updates.data;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import delta.updates.data.DirectoryEntryDescription;
 
 /**
  * Archived contents description.

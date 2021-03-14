@@ -1,6 +1,5 @@
-package delta.updates.contents;
+package delta.updates.data;
 
-import delta.updates.data.FileDescription;
 
 /**
  * Base class for contents descriptions.

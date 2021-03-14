@@ -2,15 +2,11 @@ package delta.updates.engine;
 
 import java.io.File;
 
-import delta.downloads.Downloader;
-import delta.updates.contents.ContentsManager;
-import delta.updates.contents.io.xml.ContentsXmlIO;
-import delta.updates.data.SoftwarePackage;
-import delta.updates.data.io.xml.SoftwarePackageXmlIO;
-import delta.updates.engine.providers.FileProvider;
-import delta.updates.engine.providers.HttpProvider;
-import delta.updates.engine.providers.SmartProvider;
 import junit.framework.TestCase;
+import delta.downloads.Downloader;
+import delta.updates.data.DirectoryDescription;
+import delta.updates.data.DirectoryEntryDescription;
+import delta.updates.engine.providers.HttpProvider;
 
 /**
  * Test for the update engine.
@@ -29,13 +25,9 @@ public class UpdateEngineTest extends TestCase
     String rootUrl="http://localhost:8080/delta-web-genea-1.1-SNAPSHOT/app";
     Downloader downloader=new Downloader();
     HttpProvider httpPprovider=new HttpProvider(downloader,rootUrl);
-    File contentsMgrFile=new File("contents.xml");
-    ContentsManager contentsMgr=ContentsXmlIO.parseFile(contentsMgrFile);
-    FileProvider provider=new SmartProvider(contentsMgr,httpPprovider);
-    UpdateEngine engine=new UpdateEngine(toDir,provider);
-    // Software package
-    File packageFile=new File("lotrocompanion.xml");
-    SoftwarePackage lcPackage=SoftwarePackageXmlIO.parseFile(packageFile);
-    engine.doIt(lcPackage);
+    UpdateEngine engine=new UpdateEngine(toDir,httpPprovider);
+    // Perform update
+    DirectoryEntryDescription target=new DirectoryDescription();
+    engine.doIt(target);
   }
 }
