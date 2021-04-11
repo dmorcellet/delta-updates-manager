@@ -6,15 +6,16 @@ package delta.updates.data;
  */
 public class SoftwarePackageUsage
 {
-  private SoftwarePackageReference _package;
+  private SoftwareReference _package;
   private String _relativePath;
   private String _descriptionURL;
+  private SoftwarePackageDescription _detailedDescription;
 
   /**
    * Constructor.
    * @param packageRef Package reference.
    */
-  public SoftwarePackageUsage(SoftwarePackageReference packageRef)
+  public SoftwarePackageUsage(SoftwareReference packageRef)
   {
     _package=packageRef;
   }
@@ -23,7 +24,7 @@ public class SoftwarePackageUsage
    * Get the package reference.
    * @return the package reference.
    */
-  public SoftwarePackageReference getPackage()
+  public SoftwareReference getPackage()
   {
     return _package;
   }
@@ -62,5 +63,23 @@ public class SoftwarePackageUsage
   public void setDescriptionURL(String descriptionURL)
   {
     _descriptionURL=descriptionURL;
+  }
+
+  /**
+   * Get the detailed description of this package.
+   * @return a description or <code>null</code> if not set.
+   */
+  public SoftwarePackageDescription getDetailedDescription()
+  {
+    return _detailedDescription;
+  }
+
+  /**
+   * Set the detailed description for this package.
+   * @param detailedDescription Description to set.
+   */
+  public void setDetailedDescription(SoftwarePackageDescription detailedDescription)
+  {
+    _detailedDescription=detailedDescription; 
   }
 }

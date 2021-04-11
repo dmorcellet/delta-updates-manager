@@ -36,9 +36,13 @@ public class SoftwareDescriptionXMLConstants
    */
   public static final String SOFTWARE_DATE_ATTR="date";
   /**
-   * Tag 'software','package', attribute 'description'.
+   * Tag 'software', attribute 'contentsDescription'.
    */
-  public static final String DESCRIPTION_ATTR="description";
+  public static final String CONTENTS_DESCRIPTION_ATTR="contentsDescription";
+  /**
+   * Tag 'software', attribute 'descriptionURL'.
+   */
+  public static final String DESCRIPTION_URL_ATTR="descriptionURL";
 
   /**
    * Tag 'packageUsage'.

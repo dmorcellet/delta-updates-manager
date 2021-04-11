@@ -1,10 +1,10 @@
 package delta.updates.data;
 
 /**
- * Software package reference.
+ * Software reference.
  * @author DAM
  */
-public class SoftwarePackageReference
+public class SoftwareReference
 {
   private int _id;
   private String _name;
@@ -14,7 +14,7 @@ public class SoftwarePackageReference
    * Constructor.
    * @param id Software package identifier.
    */
-  public SoftwarePackageReference(int id)
+  public SoftwareReference(int id)
   {
     _id=id;
     _name="";
@@ -76,6 +76,6 @@ public class SoftwarePackageReference
   @Override
   public String toString()
   {
-    return "Software package '"+_name+"', version "+_version;
+    return "'"+_name+"', version "+_version;
   }
 }

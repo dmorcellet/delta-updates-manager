@@ -9,11 +9,10 @@ import java.util.List;
  */
 public class SoftwareDescription
 {
-  private int _id;
-  private String _name;
-  private Version _version;
+  private SoftwareReference _reference;
   private long _date;
-  private String _description;
+  private String _contentsDescription;
+  private String _descriptionURL;
   private List<SoftwarePackageUsage> _packages;
 
   /**
@@ -22,10 +21,8 @@ public class SoftwareDescription
    */
   public SoftwareDescription(int id)
   {
-    _id=id;
-    _name="";
-    _version=new Version();
-    _description="";
+    _reference=new SoftwareReference(id);
+    _contentsDescription="";
     _packages=new ArrayList<SoftwarePackageUsage>();
   }
 
@@ -35,7 +32,7 @@ public class SoftwareDescription
    */
   public int getId()
   {
-    return _id;
+    return _reference.getId();
   }
 
   /**
@@ -44,7 +41,7 @@ public class SoftwareDescription
    */
   public String getName()
   {
-    return _name;
+    return _reference.getName();
   }
 
   /**
@@ -53,11 +50,7 @@ public class SoftwareDescription
    */
   public void setName(String name)
   {
-    if (name==null)
-    {
-      name="";
-    }
-    _name=name;
+    _reference.setName(name);
   }
 
   /**
@@ -66,7 +59,7 @@ public class SoftwareDescription
    */
   public Version getVersion()
   {
-    return _version;
+    return _reference.getVersion();
   }
 
   /**
@@ -75,10 +68,7 @@ public class SoftwareDescription
    */
   public void setVersion(Version version)
   {
-    if (version!=null)
-    {
-      _version=version;
-    }
+    _reference.setVersion(version);
   }
 
   /**
@@ -103,22 +93,44 @@ public class SoftwareDescription
    * Get a description of the software.
    * @return a description.
    */
-  public String getDescription()
+  public String getContentsDescription()
   {
-    return _description;
+    return _contentsDescription;
   }
 
   /**
    * Set the description of the software.
-   * @param description Description to set.
+   * @param contentsDescription Description to set.
    */
-  public void setDescription(String description)
+  public void setContentsDescription(String contentsDescription)
   {
-    if (description==null)
+    if (contentsDescription==null)
     {
-      description="";
+      contentsDescription="";
     }
-    _description=description;
+    _contentsDescription=contentsDescription;
+  }
+
+  /**
+   * Get a description URL.
+   * @return an URL where we find the current description of this software.
+   */
+  public String getDescriptionURL()
+  {
+    return _descriptionURL;
+  }
+
+  /**
+   * Set the URL of the description of this software.
+   * @param descriptionURL URL to set.
+   */
+  public void setDescriptionURL(String descriptionURL)
+  {
+    if (descriptionURL==null)
+    {
+      descriptionURL="";
+    }
+    _descriptionURL=descriptionURL;
   }
 
   /**
@@ -142,6 +154,6 @@ public class SoftwareDescription
   @Override
   public String toString()
   {
-    return "Software '"+_name+"', version "+_version;
+    return "Software " + _reference;
   }
 }

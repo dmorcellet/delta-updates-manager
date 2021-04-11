@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class SoftwarePackageDescription
 {
-  private SoftwarePackageReference _reference;
+  private SoftwareReference _reference;
   private List<String> _sourceURLs;
   private ContentsDescription _contents;
 
@@ -25,7 +25,7 @@ public class SoftwarePackageDescription
    * Get the package reference.
    * @return the package reference.
    */
-  public SoftwarePackageReference getReference()
+  public SoftwareReference getReference()
   {
     return _reference;
   }
@@ -34,7 +34,7 @@ public class SoftwarePackageDescription
    * Set the software package reference.
    * @param reference Reference to set.
    */
-  public void setReference(SoftwarePackageReference reference)
+  public void setReference(SoftwareReference reference)
   {
     _reference=reference;
   }

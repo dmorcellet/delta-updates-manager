@@ -9,7 +9,7 @@ import delta.common.utils.xml.DOMParsingTools;
 import delta.updates.data.ContentsDescription;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
-import delta.updates.data.SoftwarePackageReference;
+import delta.updates.data.SoftwareReference;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.Version;
 
@@ -39,9 +39,12 @@ public class SoftwareDescriptionXMLParser
     // Date
     long date=DOMParsingTools.getLongAttribute(attrs,SoftwareDescriptionXMLConstants.SOFTWARE_DATE_ATTR,0); 
     ret.setDate(date);
-    // Description
-    String description=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.DESCRIPTION_ATTR,"");
-    ret.setDescription(description);
+    // Contents description
+    String contentsDescription=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.CONTENTS_DESCRIPTION_ATTR,"");
+    ret.setContentsDescription(contentsDescription);
+    // Description URL
+    String descriptionURL=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.DESCRIPTION_URL_ATTR,"");
+    ret.setDescriptionURL(descriptionURL);
     // Package usages
     List<Element> packageTags=DOMParsingTools.getChildTagsByName(root,SoftwareDescriptionXMLConstants.PACKAGE_USAGE_TAG);
     for(Element packageTag : packageTags)
@@ -56,7 +59,7 @@ public class SoftwareDescriptionXMLParser
   {
     NamedNodeMap attrs=packageUsageTag.getAttributes();
     // Reference
-    SoftwarePackageReference packageReference=parsePackageReference(packageUsageTag);
+    SoftwareReference packageReference=parsePackageReference(packageUsageTag);
     SoftwarePackageUsage ret=new SoftwarePackageUsage(packageReference);
     // Relative path
     String relativePath=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.PACKAGE_USAGE_RELATIVE_PATH_ATTR,"");
@@ -76,7 +79,7 @@ public class SoftwareDescriptionXMLParser
   {
     SoftwarePackageDescription ret=new SoftwarePackageDescription();
     // Reference
-    SoftwarePackageReference ref=parsePackageReference(root);
+    SoftwareReference ref=parsePackageReference(root);
     ret.setReference(ref);
     // Source URLs
     List<Element> sourceTags=DOMParsingTools.getChildTagsByName(root,SoftwareDescriptionXMLConstants.SOURCE_URL_TAG);
@@ -100,12 +103,12 @@ public class SoftwareDescriptionXMLParser
    * @param root Root XML tag.
    * @return the loaded data.
    */
-  private static SoftwarePackageReference parsePackageReference(Element root)
+  private static SoftwareReference parsePackageReference(Element root)
   {
     NamedNodeMap attrs=root.getAttributes();
     // ID
     int id=DOMParsingTools.getIntAttribute(attrs,SoftwareDescriptionXMLConstants.ID_ATTR,0);
-    SoftwarePackageReference ret=new SoftwarePackageReference(id);
+    SoftwareReference ret=new SoftwareReference(id);
     // Name
     String name=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.NAME_ATTR,"");
     ret.setName(name);

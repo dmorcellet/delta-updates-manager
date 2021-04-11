@@ -9,7 +9,7 @@ import delta.common.utils.io.xml.XmlWriter;
 import delta.updates.data.ContentsDescription;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
-import delta.updates.data.SoftwarePackageReference;
+import delta.updates.data.SoftwareReference;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.Version;
 
@@ -45,11 +45,17 @@ public class SoftwareDescriptionXMLWriter
     {
       attrs.addAttribute("","",SoftwareDescriptionXMLConstants.SOFTWARE_DATE_ATTR,XmlWriter.CDATA,String.valueOf(date));
     }
-    // Description
-    String description=software.getDescription();
-    if (description.length()>0)
+    // Contents Description
+    String contentsDescription=software.getContentsDescription();
+    if (contentsDescription.length()>0)
     {
-      attrs.addAttribute("","",SoftwareDescriptionXMLConstants.DESCRIPTION_ATTR,XmlWriter.CDATA,description);
+      attrs.addAttribute("","",SoftwareDescriptionXMLConstants.CONTENTS_DESCRIPTION_ATTR,XmlWriter.CDATA,contentsDescription);
+    }
+    // Description URL
+    String descriptionURL=software.getDescriptionURL();
+    if (descriptionURL.length()>0)
+    {
+      attrs.addAttribute("","",SoftwareDescriptionXMLConstants.DESCRIPTION_URL_ATTR,XmlWriter.CDATA,descriptionURL);
     }
     hd.startElement("","",SoftwareDescriptionXMLConstants.SOFTWARE_TAG,attrs);
     // Package usages
@@ -64,7 +70,7 @@ public class SoftwareDescriptionXMLWriter
   {
     AttributesImpl attrs=new AttributesImpl();
     // Reference
-    SoftwarePackageReference packageReference=packageUsage.getPackage();
+    SoftwareReference packageReference=packageUsage.getPackage();
     writePackageReference(attrs,packageReference);
     // Relative path
     String relativePath=packageUsage.getRelativePath();
@@ -86,7 +92,7 @@ public class SoftwareDescriptionXMLWriter
   {
     AttributesImpl attrs=new AttributesImpl();
     // Reference
-    SoftwarePackageReference packageReference=packageDescription.getReference();
+    SoftwareReference packageReference=packageDescription.getReference();
     writePackageReference(attrs,packageReference);
     hd.startElement("","",SoftwareDescriptionXMLConstants.PACKAGE_TAG,attrs);
     // Source URLs
@@ -103,7 +109,7 @@ public class SoftwareDescriptionXMLWriter
     hd.endElement("","",SoftwareDescriptionXMLConstants.PACKAGE_TAG);
   }
 
-  private static void writePackageReference(AttributesImpl attrs, SoftwarePackageReference packageReference)
+  private static void writePackageReference(AttributesImpl attrs, SoftwareReference packageReference)
   {
     // ID
     int id=packageReference.getId();

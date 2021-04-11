@@ -13,8 +13,7 @@ import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
 import delta.updates.data.SoftwarePackageDescription;
-import delta.updates.data.SoftwarePackageReference;
-import delta.updates.data.io.xml.SoftwareDescriptionXmlIO;
+import delta.updates.data.SoftwareReference;
 import delta.updates.utils.DescriptionBuilder;
 
 /**
@@ -60,12 +59,6 @@ public class PackagesBuilder
     _packages=new ArrayList<SoftwarePackageDescription>();
     handleDirectoryEntry(inputDescription);
     handleRemainingFiles((DirectoryDescription)inputDescription);
-    File rootPackagesDir=new File(_to,"packages");
-    for(SoftwarePackageDescription packageDescription :_packages)
-    {
-      File to=new File(rootPackagesDir,packageDescription.getReference().getName()+".xml");
-      SoftwareDescriptionXmlIO.writeFile(to,packageDescription);
-    }
     return _packages;
   }
 
@@ -107,7 +100,7 @@ public class PackagesBuilder
   private SoftwarePackageDescription buildPackage(DirectoryDescription rootEntry, ArchivedContents contents)
   {
     SoftwarePackageDescription packageDescription=new SoftwarePackageDescription();
-    SoftwarePackageReference ref=new SoftwarePackageReference(_packages.size());
+    SoftwareReference ref=new SoftwareReference(_packages.size());
     ref.setName(rootEntry.getName());
     packageDescription.setReference(ref);
     packageDescription.setContents(contents);
@@ -129,7 +122,8 @@ public class PackagesBuilder
     archiveFile.setName(sourceName);
     ret.setDataFile(archiveFile);
     // Build archive file
-    File toFile=new File(_to,archiveFilename);
+    File rootPackagesDir=new File(_to,"packages");
+    File toFile=new File(rootPackagesDir,archiveFilename);
     boolean ok=buildArchive(toFile,sourceDescription);
     if (!ok)
     {
