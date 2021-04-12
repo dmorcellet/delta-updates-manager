@@ -11,8 +11,8 @@ import delta.updates.data.io.xml.SoftwareDescriptionXmlIO;
 /**
  * Local data manager for the updates manager:
  * <ul>
- * <li>current software, and its package
- * <li>current packages definitions.
+ * <li>local software,
+ * <li>local packages definitions.
  * </ul>
  * @author DAM
  */
