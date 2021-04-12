@@ -151,6 +151,31 @@ public class SoftwareDescription
     _packages.add(packageUsage);
   }
 
+  /**
+   * Indicates if this software has the given package.
+   * @param packageRef Package reference.
+   * @return <code>true</code> if it does, <code>false</code> otherwise.
+   */
+  public boolean hasPackage(SoftwareReference packageRef)
+  {
+    int id=packageRef.getId();
+    Version version=packageRef.getVersion();
+    for(SoftwarePackageUsage thisPackage : _packages)
+    {
+      SoftwareReference thisPackageRef=thisPackage.getPackage();
+      int thisId=thisPackageRef.getId();
+      if (thisId==id)
+      {
+        Version thisPackageVersion=thisPackageRef.getVersion();
+        if (thisPackageVersion.getId()>=version.getId())
+        {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   @Override
   public String toString()
   {
