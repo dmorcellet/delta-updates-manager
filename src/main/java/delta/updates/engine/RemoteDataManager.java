@@ -55,12 +55,18 @@ public class RemoteDataManager
   /**
    * Resolve a package usage (find its detailed description).
    * @param packageUsage Targeted package usage.
+   * @return <code>true</code> if resolution is OK, <code>false</code> otherwise.
    */
-  public void resolvePackage(SoftwarePackageUsage packageUsage)
+  public boolean resolvePackage(SoftwarePackageUsage packageUsage)
   {
     String descriptionURL=packageUsage.getDescriptionURL();
     SoftwarePackageDescription packageDescription=loadPackageDescription(descriptionURL);
-    packageUsage.setDetailedDescription(packageDescription);
+    if (packageDescription!=null)
+    {
+      packageUsage.setDetailedDescription(packageDescription);
+      return true;
+    }
+    return false;
   }
 
   private SoftwarePackageDescription loadPackageDescription(String descriptionURL)

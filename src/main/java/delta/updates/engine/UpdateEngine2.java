@@ -92,8 +92,27 @@ public class UpdateEngine2
   {
     for(SoftwarePackageUsage neededPackage : neededPackages)
     {
-      _remoteData.resolvePackage(neededPackage);
-      _workspace.getPackage(neededPackage);
+      handlePackage(neededPackage);
     }
+  }
+
+  private boolean handlePackage(SoftwarePackageUsage neededPackage)
+  {
+    // Find package details
+    boolean ok=_remoteData.resolvePackage(neededPackage);
+    if (!ok)
+    {
+      return ok;
+    }
+    // Download package
+    ok=_workspace.getPackage(neededPackage);
+    if (!ok)
+    {
+      return ok;
+    }
+    // Apply package
+    PackageIntegrator integrator=new PackageIntegrator(_localData,_workspace);
+    ok=integrator.doIt(neededPackage);
+    return ok;
   }
 }

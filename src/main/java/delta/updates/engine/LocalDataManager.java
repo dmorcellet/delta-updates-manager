@@ -33,6 +33,15 @@ public class LocalDataManager
     init();
   }
 
+  /**
+   * Get the root directory for local data.
+   * @return a root dirctory.
+   */
+  public File getRootDir()
+  {
+    return _rootDir;
+  }
+
   private void init()
   {
     loadSoftware();

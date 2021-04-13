@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import delta.common.utils.files.archives.ArchiveDeflater;
 import delta.downloads.DownloadException;
 import delta.downloads.Downloader;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.data.SoftwareReference;
 
 /**
  * Workspace to work with packages.
@@ -41,40 +43,97 @@ public class PackagesWorkspace
   {
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
     List<String> sourceURLs=packageDescription.getSourceURLs();
-    File packageFile=null;
+    SoftwareReference packageReference=packageUsage.getPackage();
+    boolean ok=false;
     for(String sourceURL : sourceURLs)
     {
-      packageFile=downloadPackage(packageUsage,sourceURL);
-      if (packageFile!=null)
+      ok=downloadPackage(packageReference,sourceURL);
+      if (ok)
       {
         break;
       }
     }
-    if (packageFile==null)
+    if (ok)
     {
-      LOGGER.info("Could not get package: "+packageUsage.getPackage());
+      LOGGER.info("Download package: "+packageReference);
+    }
+    else
+    {
+      LOGGER.info("Could not get package: "+packageReference);
       return false;
     }
+    // Expand
+    ok=expandPackage(packageReference);
     // TODO Check: size, contents
     return true;
   }
 
-  private File downloadPackage(SoftwarePackageUsage packageUsage, String url)
+  private boolean downloadPackage(SoftwareReference packageReference, String url)
   {
-    File packagesDir=new File(_rootDir,"packages");
-    int id=packageUsage.getPackage().getId();
-    String name=id+".zip";
-    File packageFile=new File(packagesDir,name);
-    packageFile.getParentFile().mkdirs();
+    File packageArchiveFile=getPackageArchiveFile(packageReference);
+    packageArchiveFile.getParentFile().mkdirs();
     boolean ok=false;
     try
     {
-      ok=_downloader.downloadToFile(url,packageFile);
+      ok=_downloader.downloadToFile(url,packageArchiveFile);
     }
     catch(DownloadException downloadException)
     {
       LOGGER.warn("Could not download package froml: "+url,downloadException);
     }
-    return (ok)?packageFile:null;
+    return ok;
+  }
+
+  /**
+   * Expand the given package from the source archive.
+   * @param packageReference Package to use.
+   * @return <code>true</code> if it succeeded, <code>false</code> otherwise.
+   */
+  private boolean expandPackage(SoftwareReference packageReference)
+  {
+    File packageArchiveFile=getPackageArchiveFile(packageReference);
+    File rootDir=getPackageRootDir(packageReference);
+    ArchiveDeflater deflated=new ArchiveDeflater(packageArchiveFile,rootDir);
+    boolean ok=deflated.go();
+    return ok;
+  }
+
+  private File getPackagesDir()
+  {
+    return new File(_rootDir,"packages");
+  }
+
+  private File getPackageArchivesDir()
+  {
+    File packagesDir=getPackagesDir();
+    return new File(packagesDir,"archives");
+  }
+
+  private File getExpandedPackagesDir()
+  {
+    File packagesDir=getPackagesDir();
+    return new File(packagesDir,"expanded");
+  }
+
+  private File getPackageArchiveFile(SoftwareReference packageReference)
+  {
+    File packagesArchiveDir=getPackageArchivesDir();
+    int id=packageReference.getId();
+    String name=id+".zip";
+    File packageArchiveFile=new File(packagesArchiveDir,name);
+    return packageArchiveFile;
+  }
+
+  /**
+   * Get the root directory that contains a deflated package.
+   * @param packageReference Targeted package.
+   * @return A directory.
+   */
+  public File getPackageRootDir(SoftwareReference packageReference)
+  {
+    File expandedDir=getExpandedPackagesDir();
+    int id=packageReference.getId();
+    File rootDir=new File(expandedDir,String.valueOf(id));
+    return rootDir;
   }
 }
