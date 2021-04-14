@@ -4,11 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import delta.updates.data.DirectoryDescription;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.SoftwareReference;
 import delta.updates.data.io.xml.SoftwareDescriptionXmlIO;
+import delta.updates.tools.SoftwareEntriesBuilder;
 
 /**
  * Local data manager for the updates manager:
@@ -20,6 +24,8 @@ import delta.updates.data.io.xml.SoftwareDescriptionXmlIO;
  */
 public class LocalDataManager
 {
+  private static final Logger LOGGER=Logger.getLogger(LocalDataManager.class);
+
   private File _rootDir;
   private File _updatesMgrDataDir;
   private SoftwareDescription _software;
@@ -50,6 +56,7 @@ public class LocalDataManager
   {
     loadSoftware();
     loadPackages();
+    resolvePackageUsages();
   }
 
   private void loadSoftware()
@@ -81,6 +88,28 @@ public class LocalDataManager
     }
   }
 
+  private void resolvePackageUsages()
+  {
+    if (_software==null)
+    {
+      return;
+    }
+    for(SoftwarePackageUsage packageUsage : _software.getPackages())
+    {
+      SoftwareReference packageReference=packageUsage.getPackage();
+      int packageID=packageReference.getId();
+      SoftwarePackageDescription packageDescription=getPackageByID(packageID);
+      if (packageDescription!=null)
+      {
+        packageUsage.setDetailedDescription(packageDescription);
+      }
+      else
+      {
+        LOGGER.warn("Could not resolve package ID="+packageID);
+      }
+    }
+  }
+
   /**
    * Get the managed software.
    * @return the managed software.
@@ -106,6 +135,24 @@ public class LocalDataManager
   public List<SoftwarePackageDescription> getPackages()
   {
     return new ArrayList<SoftwarePackageDescription>(_packages);
+  }
+
+  /**
+   * Get a package description using its identifier.
+   * @param packageID Package identifier.
+   * @return A package description.
+   */
+  public SoftwarePackageDescription getPackageByID(int packageID)
+  {
+    for(SoftwarePackageDescription packageDescription : _packages)
+    {
+      SoftwareReference packageReference=packageDescription.getReference();
+      if (packageReference.getId()==packageID)
+      {
+        return packageDescription;
+      }
+    }
+    return null;
   }
 
   /**
@@ -152,5 +199,16 @@ public class LocalDataManager
     int id=packageReference.getId();
     String filename=id+".xml";
     return new File(packagesDir,filename);
+  }
+
+  /**
+   * Get a directory description for this software.
+   * @return a directory description.
+   */
+  public DirectoryDescription getDirectoryDescription()
+  {
+    SoftwareEntriesBuilder builder=new SoftwareEntriesBuilder();
+    DirectoryDescription ret=builder.build(_software);
+    return ret;
   }
 }

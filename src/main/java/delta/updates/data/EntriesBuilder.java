@@ -10,6 +10,7 @@ import java.util.Map;
 public class EntriesBuilder
 {
   private Map<String,DirectoryDescription> _directoriesCache;
+  private DirectoryDescription _root;
 
   /**
    * Constructor.
@@ -17,6 +18,7 @@ public class EntriesBuilder
   public EntriesBuilder()
   {
     _directoriesCache=new HashMap<String,DirectoryDescription>();
+    _root=buildDirectoryFromPath("");
   }
 
   /**
@@ -40,11 +42,17 @@ public class EntriesBuilder
       String name=path.substring(index+Constants.PATH_ENTRY_SEPARATOR.length());
       ret.setName(name);
       ret.setParent(parentDir);
+      parentDir.addEntry(ret);
     }
     else
     {
       ret=new DirectoryDescription();
       ret.setName(path);
+      if (path.length()>0)
+      {
+        ret.setParent(_root);
+        _root.addEntry(ret);
+      }
     }
     _directoriesCache.put(path,ret);
     return ret;
@@ -67,11 +75,14 @@ public class EntriesBuilder
       String name=path.substring(index+Constants.PATH_ENTRY_SEPARATOR.length());
       ret.setName(name);
       ret.setParent(parentDir);
+      parentDir.addEntry(ret);
     }
     else
     {
       ret=new FileDescription();
       ret.setName(path);
+      ret.setParent(_root);
+      _root.addEntry(ret);
     }
     return ret;
   }

@@ -9,9 +9,9 @@ import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
-import delta.updates.engine.operations.OperationType;
-import delta.updates.engine.operations.UpdateOperation;
-import delta.updates.engine.operations.UpdateOperations;
+import delta.updates.data.operations.OperationType;
+import delta.updates.data.operations.UpdateOperation;
+import delta.updates.data.operations.UpdateOperations;
 import delta.updates.engine.providers.FileProvider;
 import delta.updates.utils.DescriptionBuilder;
 

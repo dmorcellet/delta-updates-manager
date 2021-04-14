@@ -1,4 +1,4 @@
-package delta.updates.engine.operations;
+package delta.updates.data.operations;
 
 import delta.updates.data.DirectoryEntryDescription;
 
