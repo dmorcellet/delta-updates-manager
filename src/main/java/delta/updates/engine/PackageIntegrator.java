@@ -10,6 +10,7 @@ import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
+import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
 
@@ -42,7 +43,15 @@ public class PackageIntegrator
    */
   public boolean doIt(SoftwarePackageUsage packageUsage)
   {
-    return writePackage(packageUsage);
+    boolean ok=writePackage(packageUsage);
+    if (ok)
+    {
+      // Update metadata
+      SoftwareDescription localSoftware=_localData.getSoftware();
+      localSoftware.addPackage(packageUsage);
+      ok=_localData.writePackage(packageUsage);
+    }
+    return ok;
   }
 
   private boolean writePackage(SoftwarePackageUsage packageUsage)

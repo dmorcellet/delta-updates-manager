@@ -6,6 +6,8 @@ import java.util.List;
 
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
+import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.data.SoftwareReference;
 import delta.updates.data.io.xml.SoftwareDescriptionXmlIO;
 
 /**
@@ -52,7 +54,7 @@ public class LocalDataManager
 
   private void loadSoftware()
   {
-    File softwareFile=new File(_updatesMgrDataDir,"software.xml");
+    File softwareFile=getSoftwareFile();
     if (softwareFile.exists())
     {
       _software=SoftwareDescriptionXmlIO.parseSoftwareDescriptionFile(softwareFile);
@@ -89,11 +91,66 @@ public class LocalDataManager
   }
 
   /**
+   * Set software.
+   * @param software Software to set.
+   */
+  public void setSoftware(SoftwareDescription software)
+  {
+    _software=software;
+  }
+
+  /**
    * Get the managed packages.
    * @return A list of packages.
    */
   public List<SoftwarePackageDescription> getPackages()
   {
     return new ArrayList<SoftwarePackageDescription>(_packages);
+  }
+
+  /**
+   * Write metadata.
+   */
+  public void writeMetadata()
+  {
+    if (_software==null)
+    {
+      return;
+    }
+    // Software
+    File softwareFile=getSoftwareFile();
+    softwareFile.getParentFile().mkdirs();
+    SoftwareDescriptionXmlIO.writeFile(softwareFile,_software);
+    // Packages
+    for(SoftwarePackageUsage packageUsage : _software.getPackages())
+    {
+      writePackage(packageUsage);
+    }
+  }
+
+  /**
+   * Write package data.
+   * @param packageUsage Package usage.
+   * @return <code>true</code> if it succeeds, <code>false</code> otherwise.
+   */
+  public boolean writePackage(SoftwarePackageUsage packageUsage)
+  {
+    File packageFile=getPackageFile(packageUsage.getPackage());
+    SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
+    return SoftwareDescriptionXmlIO.writeFile(packageFile,packageDescription);
+  }
+
+  private File getSoftwareFile()
+  {
+    File softwareFile=new File(_updatesMgrDataDir,"software.xml");
+    return softwareFile;
+  }
+
+  private File getPackageFile(SoftwareReference packageReference)
+  {
+    File packagesDir=new File(_updatesMgrDataDir,"packages");
+    int id=packageReference.getId();
+    String filename=id+".xml";
+    return new File(packagesDir,filename);
   }
 }
