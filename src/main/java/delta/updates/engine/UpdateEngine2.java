@@ -38,6 +38,15 @@ public class UpdateEngine2
   }
 
   /**
+   * Get the local data manager.
+   * @return the local data manager.
+   */
+  public LocalDataManager getLocalDataManager()
+  {
+    return _localData;
+  }
+
+  /**
    * Look if an update is available.
    * @return A software description if there is one, or <code>null</code> if problem or nothing to do.
    */
@@ -77,20 +86,6 @@ public class UpdateEngine2
     return assessment;
   }
 
-  /**
-   * Perform update.
-   * @param remoteDescription Remote description.
-   */
-  public void doIt(SoftwareDescription remoteDescription)
-  {
-    List<SoftwarePackageUsage> neededPackages=getNeededPackages(remoteDescription);
-    if (neededPackages.size()==0)
-    {
-      return;
-    }
-    handleNeededPackages(neededPackages);
-  }
-
   private boolean compareDescriptions(SoftwareDescription local, SoftwareDescription remote)
   {
     Version localVersion=local.getVersion();
@@ -123,15 +118,12 @@ public class UpdateEngine2
     return ret;
   }
 
-  private void handleNeededPackages(List<SoftwarePackageUsage> neededPackages)
-  {
-    for(SoftwarePackageUsage neededPackage : neededPackages)
-    {
-      handlePackage(neededPackage);
-    }
-  }
-
-  private boolean handlePackage(SoftwarePackageUsage neededPackage)
+  /**
+   * Handle a package update.
+   * @param neededPackage
+   * @return <code>true</code> if update was successfull, <code>false</code> otherwise.
+   */
+  public boolean handlePackage(SoftwarePackageUsage neededPackage)
   {
     // Find package details
     boolean ok=_remoteData.resolvePackage(neededPackage);
@@ -145,6 +137,8 @@ public class UpdateEngine2
     {
       return ok;
     }
+    // Check package
+    // TODO Later
     // Apply package
     PackageIntegrator integrator=new PackageIntegrator(_localData,_workspace);
     ok=integrator.doIt(neededPackage);

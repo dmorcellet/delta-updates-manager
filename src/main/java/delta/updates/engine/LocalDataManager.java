@@ -19,6 +19,7 @@ import delta.updates.data.io.xml.SoftwareDescriptionXmlIO;
 public class LocalDataManager
 {
   private File _rootDir;
+  private File _updatesMgrDataDir;
   private SoftwareDescription _software;
   private List<SoftwarePackageDescription> _packages;
 
@@ -29,6 +30,7 @@ public class LocalDataManager
   public LocalDataManager(File rootDir)
   {
     _rootDir=rootDir;
+    _updatesMgrDataDir=new File(rootDir,".updates");
     _packages=new ArrayList<SoftwarePackageDescription>();
     init();
   }
@@ -50,7 +52,7 @@ public class LocalDataManager
 
   private void loadSoftware()
   {
-    File softwareFile=new File(_rootDir,"software.xml");
+    File softwareFile=new File(_updatesMgrDataDir,"software.xml");
     if (softwareFile.exists())
     {
       _software=SoftwareDescriptionXmlIO.parseSoftwareDescriptionFile(softwareFile);
@@ -59,7 +61,7 @@ public class LocalDataManager
 
   private void loadPackages()
   {
-    File packagesDir=new File(_rootDir,".packages");
+    File packagesDir=new File(_updatesMgrDataDir,"packages");
     if (packagesDir.exists())
     {
       File[] packageFiles=packagesDir.listFiles();
