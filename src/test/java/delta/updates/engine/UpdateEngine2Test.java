@@ -1,7 +1,11 @@
 package delta.updates.engine;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 import delta.downloads.Downloader;
+import delta.updates.data.SoftwareDescription;
+import delta.updates.data.SoftwarePackageUsage;
 
 /**
  * Test for the update engine.
@@ -16,6 +20,13 @@ public class UpdateEngine2Test extends TestCase
   {
     Downloader downloader=new Downloader();
     UpdateEngine2 engine2=new UpdateEngine2(downloader);
-    engine2.doIt();
+    SoftwareDescription soft=engine2.lookForUpdate();
+    if (soft==null)
+    {
+      return;
+    }
+    List<SoftwarePackageUsage> packages=engine2.getNeededPackages(soft);
+    ResourcesAssessment assessment=engine2.assessResources(packages);
+    System.out.println("Ressources assessment: "+assessment);
   }
 }

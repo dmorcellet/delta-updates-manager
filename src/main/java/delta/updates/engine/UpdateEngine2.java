@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import delta.downloads.Downloader;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageUsage;
@@ -16,6 +18,8 @@ import delta.updates.data.Version;
  */
 public class UpdateEngine2
 {
+  private static final Logger LOGGER=Logger.getLogger(UpdateEngine2.class);
+
   private LocalDataManager _localData;
   private RemoteDataManager _remoteData;
   private PackagesWorkspace _workspace;
@@ -34,27 +38,52 @@ public class UpdateEngine2
   }
 
   /**
-   * Perform update.
+   * Look if an update is available.
+   * @return A software description if there is one, or <code>null</code> if problem or nothing to do.
    */
-  public void doIt()
+  public SoftwareDescription lookForUpdate()
   {
     SoftwareDescription localDescription=_localData.getSoftware();
     if (localDescription==null)
     {
-      return;
+      LOGGER.warn("Local software description not found!");
+      return null;
     }
     String descriptionURL=localDescription.getDescriptionURL();
     SoftwareDescription remoteDescription=_remoteData.loadCurrentDescription(descriptionURL);
     if (remoteDescription==null)
     {
-      return;
+      LOGGER.warn("Remote software description not found!");
+      return null;
     }
     boolean same=compareDescriptions(localDescription,remoteDescription);
     if (same)
     {
-      return;
+      LOGGER.info("No update available!");
+      return null;
     }
-    List<SoftwarePackageUsage> neededPackages=getNeededPackages(localDescription,remoteDescription);
+    return remoteDescription;
+  }
+
+  /**
+   * Perform resources needs assessment.
+   * @param neededPackages Packages to use.
+   * @return An assessment.
+   */
+  public ResourcesAssessment assessResources(List<SoftwarePackageUsage> neededPackages)
+  {
+    ResourcesEvaluator evaluator=new ResourcesEvaluator();
+    ResourcesAssessment assessment=evaluator.doIt(neededPackages);
+    return assessment;
+  }
+
+  /**
+   * Perform update.
+   * @param remoteDescription Remote description.
+   */
+  public void doIt(SoftwareDescription remoteDescription)
+  {
+    List<SoftwarePackageUsage> neededPackages=getNeededPackages(remoteDescription);
     if (neededPackages.size()==0)
     {
       return;
@@ -73,13 +102,19 @@ public class UpdateEngine2
     return false;
   }
 
-  private List<SoftwarePackageUsage> getNeededPackages(SoftwareDescription local, SoftwareDescription remote)
+  /**
+   * Get the packages to get.
+   * @param remoteDescription Remote software description.
+   * @return A possibly empty but never <code>null</code> list of packages.
+   */
+  public List<SoftwarePackageUsage> getNeededPackages(SoftwareDescription remoteDescription)
   {
+    SoftwareDescription localDescription=_localData.getSoftware();
     List<SoftwarePackageUsage> ret=new ArrayList<SoftwarePackageUsage>();
-    for(SoftwarePackageUsage remotePackage : remote.getPackages())
+    for(SoftwarePackageUsage remotePackage : remoteDescription.getPackages())
     {
       SoftwareReference packageReference=remotePackage.getPackage();
-      boolean hasPackage=local.hasPackage(packageReference);
+      boolean hasPackage=localDescription.hasPackage(packageReference);
       if (!hasPackage)
       {
         ret.add(remotePackage);
