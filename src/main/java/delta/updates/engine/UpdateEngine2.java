@@ -26,13 +26,13 @@ public class UpdateEngine2
 
   /**
    * Constructor.
+   * @param rootAppDir Root application directory.
    * @param downloader Downloader.
    */
-  public UpdateEngine2(Downloader downloader)
+  public UpdateEngine2(File rootAppDir, Downloader downloader)
   {
     _remoteData=new RemoteDataManager(downloader);
-    File rootDir=new File(".");
-    _localData=new LocalDataManager(rootDir);
+    _localData=new LocalDataManager(rootAppDir);
     File tmpDir=new File("__tmp");
     _workspace=new PackagesWorkspace(downloader,tmpDir);
   }
@@ -113,6 +113,8 @@ public class UpdateEngine2
       if (!hasPackage)
       {
         ret.add(remotePackage);
+        // Find package details
+        _remoteData.resolvePackage(remotePackage);
       }
     }
     return ret;
@@ -125,14 +127,8 @@ public class UpdateEngine2
    */
   public boolean handlePackage(SoftwarePackageUsage neededPackage)
   {
-    // Find package details
-    boolean ok=_remoteData.resolvePackage(neededPackage);
-    if (!ok)
-    {
-      return ok;
-    }
     // Download package
-    ok=_workspace.getPackage(neededPackage);
+    boolean ok=_workspace.getPackage(neededPackage);
     if (!ok)
     {
       return ok;
@@ -143,5 +139,13 @@ public class UpdateEngine2
     PackageIntegrator integrator=new PackageIntegrator(_localData,_workspace);
     ok=integrator.doIt(neededPackage);
     return ok;
+  }
+
+  /**
+   * Clean-up.
+   */
+  public void cleanup()
+  {
+    _workspace.cleanup();
   }
 }

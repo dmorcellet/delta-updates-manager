@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import delta.common.utils.files.FilesDeleter;
 import delta.common.utils.files.archives.ArchiveDeflater;
 import delta.downloads.DownloadException;
 import delta.downloads.Downloader;
@@ -135,5 +136,17 @@ public class PackagesWorkspace
     int id=packageReference.getId();
     File rootDir=new File(expandedDir,String.valueOf(id));
     return rootDir;
+  }
+
+  /**
+   * Clean-up.
+   */
+  public void cleanup()
+  {
+    if (_rootDir.exists())
+    {
+      FilesDeleter deleter=new FilesDeleter(_rootDir,null,true);
+      deleter.doIt();
+    }
   }
 }

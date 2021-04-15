@@ -1,5 +1,6 @@
 package delta.updates.engine;
 
+import java.io.File;
 import java.util.List;
 
 import delta.downloads.Downloader;
@@ -23,11 +24,12 @@ public class UpdateController
 
   /**
    * Constructor.
+   * @param rootAppDir Root application directory.
    */
-  public UpdateController()
+  public UpdateController(File rootAppDir)
   {
     Downloader downloader=new Downloader();
-    _engine=new UpdateEngine2(downloader);
+    _engine=new UpdateEngine2(rootAppDir,downloader);
   }
 
   /**
@@ -45,13 +47,13 @@ public class UpdateController
     SoftwareDescription localSofware=local.getSoftware();
     ResourcesAssessment assessment=_engine.assessResources(neededPackages);
     boolean updateAllowed=UpdateUI.askForUpdate(localSofware,remoteSoftware,assessment);
-    if (!updateAllowed)
+    if (updateAllowed)
     {
-      return;
+      for(SoftwarePackageUsage packageUsage : neededPackages)
+      {
+        _engine.handlePackage(packageUsage);
+      }
     }
-    for(SoftwarePackageUsage packageUsage : neededPackages)
-    {
-      _engine.handlePackage(packageUsage);
-    }
+    _engine.cleanup();
   }
 }

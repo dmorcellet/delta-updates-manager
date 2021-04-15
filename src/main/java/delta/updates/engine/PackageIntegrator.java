@@ -13,6 +13,7 @@ import delta.updates.data.FileDescription;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.utils.FileUtils;
 
 /**
  * Integrates new packages into the software installation.
@@ -50,6 +51,10 @@ public class PackageIntegrator
       SoftwareDescription localSoftware=_localData.getSoftware();
       localSoftware.addPackage(packageUsage);
       ok=_localData.writePackage(packageUsage);
+    }
+    if (ok)
+    {
+      ok=_localData.writeSoftware();
     }
     return ok;
   }
@@ -90,7 +95,7 @@ public class PackageIntegrator
       File from=new File(packageDir,path);
       File toDir=_localData.getRootDir();
       File to=new File(toDir,path);
-      boolean ok=from.renameTo(to);
+      boolean ok=FileUtils.move(from,to);
       if (!ok)
       {
         throw new IllegalStateException("Cannot rename file "+from+" to "+to);
@@ -101,10 +106,13 @@ public class PackageIntegrator
       // Create directory
       File toDir=_localData.getRootDir();
       File to=new File(toDir,path);
-      boolean ok=to.mkdirs();
-      if (!ok)
+      if (!to.exists())
       {
-        throw new IllegalStateException("Cannot create directory "+to);
+        boolean ok=to.mkdirs();
+        if (!ok)
+        {
+          throw new IllegalStateException("Cannot create directory "+to);
+        }
       }
       // Handle child files
       DirectoryDescription directory=(DirectoryDescription)entry;

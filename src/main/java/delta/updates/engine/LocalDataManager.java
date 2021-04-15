@@ -165,9 +165,7 @@ public class LocalDataManager
       return;
     }
     // Software
-    File softwareFile=getSoftwareFile();
-    softwareFile.getParentFile().mkdirs();
-    SoftwareDescriptionXmlIO.writeFile(softwareFile,_software);
+    writeSoftware();
     // Packages
     for(SoftwarePackageUsage packageUsage : _software.getPackages())
     {
@@ -185,6 +183,25 @@ public class LocalDataManager
     File packageFile=getPackageFile(packageUsage.getPackage());
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
     return SoftwareDescriptionXmlIO.writeFile(packageFile,packageDescription);
+  }
+
+  /**
+   * Write software definition to disk.
+   * @return <code>true</code> if successfull, <code>false</code> otherwise.
+   */
+  public boolean writeSoftware()
+  {
+    File softwareFile=getSoftwareFile();
+    File parentFile=softwareFile.getParentFile();
+    if (!parentFile.exists())
+    {
+      boolean ok=parentFile.mkdirs();
+      if (!ok)
+      {
+        return false;
+      }
+    }
+    return SoftwareDescriptionXmlIO.writeFile(softwareFile,_software);
   }
 
   private File getSoftwareFile()
