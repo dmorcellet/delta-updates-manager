@@ -50,11 +50,10 @@ public class SoftwareEntriesBuilder
     String path=EntryUtils.getPath(entry);
     if (".".equals(path)) path="";
     if (path.startsWith("./")) path=path.substring(2);
-    DirectoryEntryDescription newEntry=null;
     if (entry instanceof DirectoryDescription)
     {
       DirectoryDescription directory=(DirectoryDescription)entry;
-      newEntry=_entriesBuilder.buildDirectoryFromPath(path);
+      _entriesBuilder.buildDirectoryFromPath(path);
       for(DirectoryEntryDescription childEntry : directory.getEntries())
       {
         handleEntry(childEntry);
@@ -66,7 +65,6 @@ public class SoftwareEntriesBuilder
       FileDescription newFileEntry=_entriesBuilder.buildFileFromPath(path);
       newFileEntry.setCRC(fileEntry.getCRC());
       newFileEntry.setSize(fileEntry.getSize());
-      newEntry=newFileEntry;
     }
   }
 }

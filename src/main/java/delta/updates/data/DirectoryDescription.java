@@ -40,6 +40,7 @@ public class DirectoryDescription extends DirectoryEntryDescription
     if (entry!=null)
     {
       _entries.remove(entry);
+      entry.setParent(null);
     }
   }
 

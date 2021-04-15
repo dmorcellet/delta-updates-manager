@@ -1,10 +1,7 @@
 package delta.updates.tools;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import delta.common.utils.files.archives.ArchiveBuilder;
 import delta.updates.data.ArchivedContents;
@@ -28,8 +25,6 @@ public class PackagesBuilder
 {
   private File _from;
   private ToolsConfig _config;
-  private List<SoftwarePackageDescription> _packages;
-  private Set<String> _pathsToArchive;
 
   /**
    * Constructor.
@@ -40,30 +35,14 @@ public class PackagesBuilder
   {
     _from=from;
     _config=config;
-    _pathsToArchive=new HashSet<String>();
   }
 
   /**
-   * Register a well-known path to archive.
-   * @param path Path to archive.
+   * Update the provided software with the given packages.
+   * @param software Software to update.
+   * @param packages Packages to add.
    */
-  public void addPathToArchive(String path)
-  {
-    _pathsToArchive.add(path);
-  }
-
-  /**
-   * Do the job.
-   * @param software Software description.
-   */
-  public void initSoftware(SoftwareDescription software)
-  {
-    List<SoftwarePackageDescription> packages=buildPackages();
-    updateSoftware(software,packages);
-    writeMetadata(software);
-  }
-
-  private void updateSoftware(SoftwareDescription software, List<SoftwarePackageDescription> packages)
+  public void updateSoftware(SoftwareDescription software, List<SoftwarePackageDescription> packages)
   {
     // Update software description
     String baseURL=_config.getBaseURL();
@@ -88,16 +67,8 @@ public class PackagesBuilder
     LocalDataManager localData=new LocalDataManager(_from);
     localData.setSoftware(software);
     localData.writeMetadata();
-  }
-
-  private List<SoftwarePackageDescription> buildPackages()
-  {
-    DescriptionBuilder builder=new DescriptionBuilder();
-    DirectoryEntryDescription inputDescription=builder.build(_from);
-    _packages=new ArrayList<SoftwarePackageDescription>();
-    handleDirectoryEntry(inputDescription);
-    handleRemainingFiles((DirectoryDescription)inputDescription);
-    return _packages;
+    // Write metadata
+    writeMetadata(software);
   }
 
   private void writeMetadata(SoftwareDescription software)
@@ -117,66 +88,41 @@ public class PackagesBuilder
     }
   }
 
-  private void handleDirectoryEntry(DirectoryEntryDescription entry)
+  /**
+   * Build a package.
+   * @param packageID Package identifier.
+   * @param packageName Package name.
+   * @param directoryEntry Directory entry.
+   * @return A package description.
+   */
+  public SoftwarePackageDescription buildPackage(int packageID, String packageName, DirectoryDescription directoryEntry)
   {
-    if (entry instanceof DirectoryDescription)
+    // Remove from parent
+    DirectoryDescription parent=directoryEntry.getParent();
+    if (parent!=null)
     {
-      handleDirectory((DirectoryDescription)entry);
+      parent.removeEntry(directoryEntry.getName());
     }
+    // Build archive
+    ArchivedContents contents=buildArchivedContents(packageID,packageName,directoryEntry);
+    // Build package
+    SoftwarePackageDescription packageDescription=buildPackage(directoryEntry,contents,packageID,packageName);
+    return packageDescription;
   }
 
-  private void handleDirectory(DirectoryDescription directoryEntry)
-  {
-    String path=EntryUtils.getPath(directoryEntry);
-    if (_pathsToArchive.contains(path))
-    {
-      int packageID=_packages.size();
-      ArchivedContents contents=buildArchivedContents(directoryEntry,packageID);
-      SoftwarePackageDescription packageDescription=buildPackage(directoryEntry,contents,packageID);
-      _packages.add(packageDescription);
-      directoryEntry.getParent().removeEntry(directoryEntry.getName());
-    }
-    else
-    {
-      for(DirectoryEntryDescription childEntry : directoryEntry.getEntries())
-      {
-        handleDirectoryEntry(childEntry);
-      }
-    }
-  }
-
-  private void handleRemainingFiles(DirectoryDescription inputDescription)
-  {
-    int packageID=_packages.size();
-    ArchivedContents contents=buildArchivedContents(inputDescription,packageID);
-    SoftwarePackageDescription packageDescription=buildPackage(inputDescription,contents,packageID);
-    packageDescription.getReference().setName("main");
-    _packages.add(packageDescription);
-  }
-
-  private SoftwarePackageDescription buildPackage(DirectoryDescription rootEntry, ArchivedContents contents, int packageID)
+  private SoftwarePackageDescription buildPackage(DirectoryDescription rootEntry, ArchivedContents contents, int packageID, String packageName)
   {
     SoftwarePackageDescription packageDescription=new SoftwarePackageDescription();
     SoftwareReference ref=new SoftwareReference(packageID);
-    ref.setName(rootEntry.getName());
+    ref.setName(packageName);
     packageDescription.setReference(ref);
     packageDescription.setContents(contents);
     return packageDescription;
   }
 
-  private ArchivedContents buildArchivedContents(DirectoryEntryDescription sourceDescription, int packageID)
+  private ArchivedContents buildArchivedContents(int packageID, String packageName, DirectoryDescription sourceDescription)
   {
     ArchivedContents ret=new ArchivedContents();
-    // Compute archive file path
-    FileDescription archiveFile=new FileDescription();
-    archiveFile.setParent(sourceDescription.getParent());
-    String sourceName=sourceDescription.getName();
-    if (".".equals(sourceName))
-    {
-      sourceName="main";
-    }
-    archiveFile.setName(sourceName);
-    ret.setDataFile(archiveFile);
     // Build archive file
     File resultsDir=_config.getResultsDir();
     File rootPackagesDir=new File(resultsDir,"packages");
@@ -188,12 +134,26 @@ public class PackagesBuilder
       return null;
     }
     // Setup contents data
+    FileDescription archiveFile=new FileDescription();
     DescriptionBuilder.fillFileEntry(archiveFile,toFile);
-    ret.addEntry(sourceDescription);
+    ret.setDataFile(archiveFile);
+    if (sourceDescription.getName().length()==0)
+    {
+      // Multiple files/directories at root directory
+      for(DirectoryEntryDescription childEntry : sourceDescription.getEntries())
+      {
+        ret.addEntry(childEntry);
+      }
+    }
+    else
+    {
+      // Single root directory
+      ret.addEntry(sourceDescription);
+    }
     return ret;
   }
 
-  private boolean buildArchive(File toFile, DirectoryEntryDescription sourceDescription)
+  private boolean buildArchive(File toFile, DirectoryDescription sourceDescription)
   {
     toFile.getParentFile().mkdirs();
     ArchiveBuilder builder=new ArchiveBuilder(toFile);
@@ -201,7 +161,20 @@ public class PackagesBuilder
     {
       return false;
     }
-    handleArchiveEntry(builder,sourceDescription);
+    if (sourceDescription.getName().length()==0)
+    {
+      // Multiple files/directories at root directory
+      for(DirectoryEntryDescription childEntry : sourceDescription.getEntries())
+      {
+        childEntry.setParent(null);
+        handleArchiveEntry(builder,childEntry);
+      }
+    }
+    else
+    {
+      // Single root directory
+      handleArchiveEntry(builder,sourceDescription);
+    }
     builder.terminate();
     return true;
   }
@@ -219,7 +192,6 @@ public class PackagesBuilder
     else
     {
       String path=EntryUtils.getPath(source);
-      if (path.startsWith("./")) path=path.substring(2);
       File sourceFile=new File(_from,path);
       File archiveEntry=new File(path);
       builder.addFile(sourceFile,archiveEntry);
