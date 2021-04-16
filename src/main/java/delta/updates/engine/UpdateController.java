@@ -44,15 +44,17 @@ public class UpdateController
     }
     List<SoftwarePackageUsage> neededPackages=_engine.getNeededPackages(remoteSoftware);
     LocalDataManager local=_engine.getLocalDataManager();
-    SoftwareDescription localSofware=local.getSoftware();
+    SoftwareDescription localSoftware=local.getSoftware();
     ResourcesAssessment assessment=_engine.assessResources(neededPackages);
-    boolean updateAllowed=UpdateUI.askForUpdate(localSofware,remoteSoftware,assessment);
+    boolean updateAllowed=UpdateUI.askForUpdate(localSoftware,remoteSoftware,assessment);
     if (updateAllowed)
     {
       for(SoftwarePackageUsage packageUsage : neededPackages)
       {
         _engine.handlePackage(packageUsage);
       }
+      localSoftware.setVersion(remoteSoftware.getVersion());
+      local.writeSoftware();
     }
     _engine.cleanup();
   }
