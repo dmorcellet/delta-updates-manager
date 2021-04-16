@@ -40,7 +40,7 @@ public class ContentsXMLWriter
   {
     // path
     String path=EntryUtils.getPath(file);
-    attrs.addAttribute("","",ContentsXMLConstants.FILE_PATH_ATTR,XmlWriter.CDATA,path);
+    attrs.addAttribute("","",ContentsXMLConstants.FILE_NAME_ATTR,XmlWriter.CDATA,path);
     // Size
     long size=file.getSize();
     attrs.addAttribute("","",ContentsXMLConstants.FILE_SIZE_ATTR,XmlWriter.CDATA,String.valueOf(size));

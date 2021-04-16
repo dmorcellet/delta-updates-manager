@@ -14,7 +14,7 @@ public class ContentsXMLConstants
   /**
    * Tag 'archive', attribute 'path'.
    */
-  public static final String FILE_PATH_ATTR="path";
+  public static final String FILE_NAME_ATTR="path";
   /**
    * Tag 'archive', attribute 'size'.
    */

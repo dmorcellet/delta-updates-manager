@@ -66,9 +66,10 @@ public class ContentsXMLParser
   private static FileDescription parseFileAttrs(Element fileTag, EntriesBuilder entriesBuilder)
   {
     NamedNodeMap attrs=fileTag.getAttributes();
-    // Path
-    String path=DOMParsingTools.getStringAttribute(attrs,ContentsXMLConstants.FILE_PATH_ATTR,"");
-    FileDescription file=entriesBuilder.buildFileFromPath(path);
+    FileDescription file=new FileDescription();
+    // Name
+    String name=DOMParsingTools.getStringAttribute(attrs,ContentsXMLConstants.FILE_NAME_ATTR,"");
+    file.setName(name);
     // Size
     long size=DOMParsingTools.getLongAttribute(attrs,ContentsXMLConstants.FILE_SIZE_ATTR,0);
     file.setSize(size);
