@@ -48,7 +48,10 @@ public class SoftwareEntriesBuilder
       }
     }
     // Delete
-    // TODO
+    for(String deletedPath : packageDescription.getEntriesToDelete())
+    {
+      _entriesBuilder.removeEntry(deletedPath);
+    }
   }
 
   private void handleEntry(DirectoryEntryDescription entry)

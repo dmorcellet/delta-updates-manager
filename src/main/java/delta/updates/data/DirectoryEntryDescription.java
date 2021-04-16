@@ -27,6 +27,17 @@ public abstract class DirectoryEntryDescription
   }
 
   /**
+   * Remove this entry from its parent, if any.
+   */
+  public void removeFromParent()
+  {
+    if (_parent!=null)
+    {
+      _parent.removeEntry(this);
+    }
+  }
+
+  /**
    * Set the parent directory.
    * @param parent Parent to set.
    */

@@ -86,4 +86,21 @@ public class EntriesBuilder
     }
     return ret;
   }
+
+  /**
+   * Remove an entry using its path.
+   * @param path Path to remove.
+   * @return <code>true</code> if removal was done, <code>false</code> otherwise.
+   */
+  public boolean removeEntry(String path)
+  {
+    DirectoryEntryDescription entry=_root.findByPath(path);
+    if (entry==null)
+    {
+      return false;
+    }
+    entry.removeFromParent();
+    _directoriesCache.remove(path);
+    return true;
+  }
 }
