@@ -1,19 +1,16 @@
 package delta.updates.engine;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import delta.common.utils.files.FilesDeleter;
-import delta.updates.data.DirectoryDescription;
-import delta.updates.data.DirectoryEntryDescription;
-import delta.updates.data.EntryUtils;
-import delta.updates.data.FileDescription;
-import delta.updates.data.operations.OperationType;
-import delta.updates.data.operations.UpdateOperation;
-import delta.updates.data.operations.UpdateOperations;
-import delta.updates.engine.providers.FileProvider;
-import delta.updates.utils.DescriptionBuilder;
+import delta.downloads.Downloader;
+import delta.updates.data.SoftwareDescription;
+import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.data.SoftwareReference;
+import delta.updates.data.Version;
 
 /**
  * Update engine.
@@ -23,100 +20,132 @@ public class UpdateEngine
 {
   private static final Logger LOGGER=Logger.getLogger(UpdateEngine.class);
 
-  private File _tmpDir;
-  private File _toDir;
-  private FileProvider _provider;
+  private LocalDataManager _localData;
+  private RemoteDataManager _remoteData;
+  private PackagesWorkspace _workspace;
 
   /**
    * Constructor.
-   * @param toDir Directory of data to update.
-   * @param provider File provider.
+   * @param rootAppDir Root application directory.
+   * @param downloader Downloader.
    */
-  public UpdateEngine(File toDir, FileProvider provider)
+  public UpdateEngine(File rootAppDir, Downloader downloader)
   {
-    _toDir=toDir;
-    _provider=provider;
-    _tmpDir=new File(_toDir,"__tmp");
+    _remoteData=new RemoteDataManager(downloader);
+    _localData=new LocalDataManager(rootAppDir);
+    File tmpDir=new File("__tmp");
+    _workspace=new PackagesWorkspace(downloader,tmpDir);
   }
 
   /**
-   * Perform update.
-   * @param target Target description.
+   * Get the local data manager.
+   * @return the local data manager.
    */
-  public void doIt(DirectoryEntryDescription target)
+  public LocalDataManager getLocalDataManager()
   {
-    // Update
-    update(target);
-    // Cleanup
-    FilesDeleter deleter=new FilesDeleter(_tmpDir,null,true);
-    deleter.doIt();
+    return _localData;
   }
 
-  private void update(DirectoryEntryDescription target)
+  /**
+   * Look if an update is available.
+   * @return A software description if there is one, or <code>null</code> if problem or nothing to do.
+   */
+  public SoftwareDescription lookForUpdate()
   {
-    if (!_toDir.exists())
+    SoftwareDescription localDescription=_localData.getSoftware();
+    if (localDescription==null)
     {
-      _toDir.mkdirs();
+      LOGGER.warn("Local software description not found!");
+      return null;
     }
-    DescriptionBuilder builder=new DescriptionBuilder();
-    DirectoryEntryDescription to=builder.build(_toDir);
-    UpdateOperationsBuilder updatesBuilder=new UpdateOperationsBuilder();
-    UpdateOperations operations=updatesBuilder.computeDiff(to,target);
-    handleOperations(operations);
-  }
-
-  private void handleOperations(UpdateOperations operations)
-  {
-    getNewFiles(operations);
-    applyUpdates(operations);
-  }
-
-  private void getNewFiles(UpdateOperations operations)
-  {
-    for(UpdateOperation operation : operations.getOperations())
+    String descriptionURL=localDescription.getDescriptionURL();
+    SoftwareDescription remoteDescription=_remoteData.loadCurrentDescription(descriptionURL);
+    if (remoteDescription==null)
     {
-      OperationType type=operation.getOperation();
-      if ((type==OperationType.ADD) || (type==OperationType.UPDATE))
+      LOGGER.warn("Remote software description not found!");
+      return null;
+    }
+    boolean same=compareDescriptions(localDescription,remoteDescription);
+    if (same)
+    {
+      LOGGER.info("No update available!");
+      return null;
+    }
+    return remoteDescription;
+  }
+
+  /**
+   * Perform resources needs assessment.
+   * @param neededPackages Packages to use.
+   * @return An assessment.
+   */
+  public ResourcesAssessment assessResources(List<SoftwarePackageUsage> neededPackages)
+  {
+    ResourcesEvaluator evaluator=new ResourcesEvaluator();
+    ResourcesAssessment assessment=evaluator.doIt(neededPackages);
+    return assessment;
+  }
+
+  private boolean compareDescriptions(SoftwareDescription local, SoftwareDescription remote)
+  {
+    Version localVersion=local.getVersion();
+    Version remoteVersion=remote.getVersion();
+    if (localVersion.getId()>=remoteVersion.getId())
+    {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get the packages to get.
+   * @param remoteDescription Remote software description.
+   * @return A possibly empty but never <code>null</code> list of packages.
+   */
+  public List<SoftwarePackageUsage> getNeededPackages(SoftwareDescription remoteDescription)
+  {
+    SoftwareDescription localDescription=_localData.getSoftware();
+    List<SoftwarePackageUsage> ret=new ArrayList<SoftwarePackageUsage>();
+    for(SoftwarePackageUsage remotePackage : remoteDescription.getPackages())
+    {
+      SoftwareReference packageReference=remotePackage.getPackage();
+      boolean hasPackage=localDescription.hasPackage(packageReference);
+      if (!hasPackage)
       {
-        DirectoryEntryDescription entry=operation.getEntry();
-        String path=EntryUtils.getPath(entry);
-        if (entry instanceof DirectoryDescription)
-        {
-          File newDir=new File(_tmpDir,path);
-          newDir.mkdirs();
-        }
-        else
-        {
-          boolean ok=_provider.getFile((FileDescription)entry,_tmpDir);
-          if (!ok)
-          {
-            LOGGER.error("Failed: "+path);
-          }
-        }
+        ret.add(remotePackage);
+        // Find package details
+        _remoteData.resolvePackage(remotePackage);
       }
     }
+    return ret;
   }
 
-  private void applyUpdates(UpdateOperations operations)
+  /**
+   * Handle a package update.
+   * @param neededPackage
+   * @return <code>true</code> if update was successfull, <code>false</code> otherwise.
+   */
+  public boolean handlePackage(SoftwarePackageUsage neededPackage)
   {
-    for(UpdateOperation operation : operations.getOperations())
+    // Download package
+    boolean ok=_workspace.getPackage(neededPackage);
+    if (!ok)
     {
-      DirectoryEntryDescription entry=operation.getEntry();
-      String path=EntryUtils.getPath(entry);
-      OperationType type=operation.getOperation();
-      if ((type==OperationType.UPDATE) || (type==OperationType.ADD))
-      {
-        // Move file/directory
-        File from=new File(_tmpDir,path);
-        File to=new File(_toDir,path);
-        from.renameTo(to);
-      }
-      else if (type==OperationType.DELETE)
-      {
-        // Delete file/directory
-        File to=new File(_toDir,path);
-        to.delete();
-      }
+      return ok;
     }
+    // Check package
+    // TODO Later
+    // Apply package
+    PackageIntegrator integrator=new PackageIntegrator(_localData,_workspace);
+    ok=integrator.doIt(neededPackage);
+    return ok;
+  }
+
+  /**
+   * Clean-up.
+   */
+  public void cleanup()
+  {
+    _workspace.cleanup();
   }
 }

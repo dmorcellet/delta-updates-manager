@@ -5,7 +5,6 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import delta.updates.data.ArchivedContents;
-import delta.updates.data.ContentsDescription;
 import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
@@ -65,9 +64,9 @@ public class PackageIntegrator
     try
     {
       SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
-      ContentsDescription contents=packageDescription.getContents();
+      ArchivedContents contents=packageDescription.getContents();
       File packageDir=_workspace.getPackageRootDir(packageUsage.getPackage());
-      applyUpdates((ArchivedContents)contents,packageDir);
+      applyUpdates(contents,packageDir);
       ok=true;
     }
     catch(Exception e)

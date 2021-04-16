@@ -6,11 +6,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 import delta.common.utils.xml.DOMParsingTools;
-import delta.updates.data.ContentsDescription;
+import delta.updates.data.ArchivedContents;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
-import delta.updates.data.SoftwareReference;
 import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.data.SoftwareReference;
 import delta.updates.data.Version;
 
 /**
@@ -92,7 +92,7 @@ public class SoftwareDescriptionXMLParser
     Element contentsTags=DOMParsingTools.getChildTagByName(root,ContentsXMLConstants.ARCHIVE_TAG);
     if (contentsTags!=null)
     {
-      ContentsDescription contents=ContentsXMLParser.parseContentsDescriptionTag(contentsTags);
+      ArchivedContents contents=ContentsXMLParser.parseContentsDescriptionTag(contentsTags);
       ret.setContents(contents);
     }
     return ret;

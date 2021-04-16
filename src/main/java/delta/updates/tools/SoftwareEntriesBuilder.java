@@ -38,7 +38,7 @@ public class SoftwareEntriesBuilder
 
   private void handlePackage(SoftwarePackageDescription packageDescription)
   {
-    ArchivedContents contents=(ArchivedContents)packageDescription.getContents();
+    ArchivedContents contents=packageDescription.getContents();
     for(DirectoryEntryDescription entry : contents.getEntries())
     {
       handleEntry(entry);

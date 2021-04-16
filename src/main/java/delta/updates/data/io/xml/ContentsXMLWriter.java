@@ -7,11 +7,9 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import delta.common.utils.io.xml.XmlWriter;
 import delta.updates.data.ArchivedContents;
-import delta.updates.data.ContentsDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.EntryUtils;
 import delta.updates.data.FileDescription;
-import delta.updates.data.RawContents;
 
 /**
  * Writes contents descriptions to XML files.
@@ -22,31 +20,10 @@ public class ContentsXMLWriter
   /**
    * Write a contents description to the given output.
    * @param hd Output.
-   * @param contents Contents to write.
+   * @param archivedContents Contents to write.
    * @throws SAXException If an error occurs.
    */
-  public static void writeContents(TransformerHandler hd, ContentsDescription contents) throws SAXException
-  {
-    if (contents instanceof RawContents)
-    {
-      writeRawFile(hd,(RawContents)contents);
-    }
-    else if (contents instanceof ArchivedContents)
-    {
-      writeArchive(hd,(ArchivedContents)contents);
-    }
-  }
-
-  private static void writeRawFile(TransformerHandler hd, RawContents rawContents) throws SAXException
-  {
-    AttributesImpl attrs=new AttributesImpl();
-    FileDescription source=rawContents.getDataFile();
-    writeFileAttrs(hd,attrs,source);
-    hd.startElement("","",ContentsXMLConstants.RAW_FILE_TAG,attrs);
-    hd.endElement("","",ContentsXMLConstants.RAW_FILE_TAG);
-  }
-
-  private static void writeArchive(TransformerHandler hd, ArchivedContents archivedContents) throws SAXException
+  public static void writeContents(TransformerHandler hd, ArchivedContents archivedContents) throws SAXException
   {
     AttributesImpl attrs=new AttributesImpl();
     FileDescription source=archivedContents.getDataFile();

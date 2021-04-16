@@ -20,7 +20,7 @@ import delta.updates.ui.UpdateUI;
  */
 public class UpdateController
 {
-  private UpdateEngine2 _engine;
+  private UpdateEngine _engine;
 
   /**
    * Constructor.
@@ -29,7 +29,7 @@ public class UpdateController
   public UpdateController(File rootAppDir)
   {
     Downloader downloader=new Downloader();
-    _engine=new UpdateEngine2(rootAppDir,downloader);
+    _engine=new UpdateEngine(rootAppDir,downloader);
   }
 
   /**

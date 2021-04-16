@@ -6,11 +6,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import delta.common.utils.io.xml.XmlWriter;
-import delta.updates.data.ContentsDescription;
+import delta.updates.data.ArchivedContents;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
-import delta.updates.data.SoftwareReference;
 import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.data.SoftwareReference;
 import delta.updates.data.Version;
 
 /**
@@ -104,7 +104,7 @@ public class SoftwareDescriptionXMLWriter
       hd.endElement("","",SoftwareDescriptionXMLConstants.SOURCE_URL_TAG);
     }
     // Contents
-    ContentsDescription contents=packageDescription.getContents();
+    ArchivedContents contents=packageDescription.getContents();
     ContentsXMLWriter.writeContents(hd,contents);
     hd.endElement("","",SoftwareDescriptionXMLConstants.PACKAGE_TAG);
   }

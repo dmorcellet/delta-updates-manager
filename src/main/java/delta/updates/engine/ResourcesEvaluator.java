@@ -56,7 +56,7 @@ public class ResourcesEvaluator
     long packageSize=getPackageSize(packageUsage);
     // Total size of files
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
-    ArchivedContents contents=(ArchivedContents)packageDescription.getContents();
+    ArchivedContents contents=packageDescription.getContents();
     long expandedSize=0;
     for(DirectoryEntryDescription entry : contents.getEntries())
     {
@@ -91,7 +91,7 @@ public class ResourcesEvaluator
   private long getPackageSize(SoftwarePackageUsage packageUsage)
   {
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
-    ArchivedContents contents=(ArchivedContents)packageDescription.getContents();
+    ArchivedContents contents=packageDescription.getContents();
     FileDescription dataFile=contents.getDataFile();
     long packageSize=dataFile.getSize();
     return packageSize;

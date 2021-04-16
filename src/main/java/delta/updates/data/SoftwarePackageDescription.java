@@ -11,7 +11,7 @@ public class SoftwarePackageDescription
 {
   private SoftwareReference _reference;
   private List<String> _sourceURLs;
-  private ContentsDescription _contents;
+  private ArchivedContents _contents;
 
   /**
    * Constructor.
@@ -61,7 +61,7 @@ public class SoftwarePackageDescription
    * Get the description of the root entry for this package.
    * @return an entry description.
    */
-  public ContentsDescription getContents()
+  public ArchivedContents getContents()
   {
     return _contents;
   }
@@ -70,7 +70,7 @@ public class SoftwarePackageDescription
    * Set the contents.
    * @param contents Contents description.
    */
-  public void setContents(ContentsDescription contents)
+  public void setContents(ArchivedContents contents)
   {
     _contents=contents;
   }

@@ -3,6 +3,8 @@ package delta.updates.engine;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.log4j.Logger;
+
 import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.FileDescription;
@@ -16,6 +18,8 @@ import delta.updates.data.operations.UpdateOperations;
  */
 public class UpdateOperationsBuilder
 {
+  private static final Logger LOGGER=Logger.getLogger(UpdateOperationsBuilder.class);
+
   private UpdateOperations _operations;
 
   /**
@@ -49,10 +53,12 @@ public class UpdateOperationsBuilder
     {
       if (entry2 instanceof DirectoryDescription)
       {
+        // Both are directories
         handleDirectories((DirectoryDescription)entry1,(DirectoryDescription)entry2);
       }
       else
       {
+        // 1 is a directory, 2 is a file
         remove(entry1);
         add(entry2);
       }
@@ -61,13 +67,19 @@ public class UpdateOperationsBuilder
     {
       if (entry2 instanceof FileDescription)
       {
+        // Both are files
         handleFiles((FileDescription)entry1,(FileDescription)entry2);
       }
       else
       {
+        // 1 is a file, 2 is a directory
         remove(entry1);
         add(entry2);
       }
+    }
+    else
+    {
+      LOGGER.warn("Unsupported entry type: "+entry1);
     }
   }
 
@@ -98,57 +110,67 @@ public class UpdateOperationsBuilder
 
   private void handleFiles(FileDescription file1, FileDescription file2)
   {
+    // Update if size or CRC are not the same
     long size1=file1.getSize();
     long size2=file2.getSize();
     if (size1!=size2)
     {
-      update(file1);
+      update(file2);
       return;
     }
     long crc1=file1.getCRC();
     long crc2=file2.getCRC();
     if (crc1!=crc2)
     {
-      update(file1);
+      update(file2);
       return;
     }
   }
 
 
-  private void remove(DirectoryEntryDescription d)
+  private void remove(DirectoryEntryDescription entry)
   {
-    if (d instanceof DirectoryDescription)
+    if (entry instanceof DirectoryDescription)
     {
-      DirectoryDescription directory=(DirectoryDescription)d;
+      DirectoryDescription directory=(DirectoryDescription)entry;
       for(DirectoryEntryDescription childEntry : directory.getEntries())
       {
         remove(childEntry);
       }
     }
-    UpdateOperation operation=new UpdateOperation(OperationType.DELETE,d);
+    UpdateOperation operation=new UpdateOperation(OperationType.DELETE,entry);
     _operations.addOperation(operation);
-    //System.out.println("Remove entry: "+d);
+    if (LOGGER.isDebugEnabled())
+    {
+      LOGGER.debug("Remove entry: "+entry);
+    }
   }
 
-  private void add(DirectoryEntryDescription d)
+  private void add(DirectoryEntryDescription entry)
   {
-    if (d instanceof DirectoryDescription)
+    if (entry instanceof DirectoryDescription)
     {
-      DirectoryDescription directory=(DirectoryDescription)d;
+      DirectoryDescription directory=(DirectoryDescription)entry;
       for(DirectoryEntryDescription childEntry : directory.getEntries())
       {
         add(childEntry);
       }
     }
-    UpdateOperation operation=new UpdateOperation(OperationType.ADD,d);
+    UpdateOperation operation=new UpdateOperation(OperationType.ADD,entry);
     _operations.addOperation(operation);
-    //System.out.println("Add entry: "+d);
+    if (LOGGER.isDebugEnabled())
+    {
+      LOGGER.debug("Add entry: "+entry);
+    }
   }
 
-  private void update(FileDescription file)
+  private void update(FileDescription newFile)
   {
-    UpdateOperation operation=new UpdateOperation(OperationType.UPDATE,file);
+    UpdateOperation operation=new UpdateOperation(OperationType.UPDATE,newFile);
     _operations.addOperation(operation);
-    //System.out.println("Update entry: "+file);
+    if (LOGGER.isDebugEnabled())
+    {
+      LOGGER.debug("Update entry: "+newFile);
+    }
   }
 }
