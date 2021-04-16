@@ -12,6 +12,7 @@ public class SoftwarePackageDescription
   private SoftwareReference _reference;
   private List<String> _sourceURLs;
   private ArchivedContents _contents;
+  private List<String> _toDelete;
 
   /**
    * Constructor.
@@ -19,6 +20,7 @@ public class SoftwarePackageDescription
   public SoftwarePackageDescription()
   {
     _sourceURLs=new ArrayList<String>();
+    _toDelete=new ArrayList<String>();
   }
 
   /**
@@ -73,6 +75,24 @@ public class SoftwarePackageDescription
   public void setContents(ArchivedContents contents)
   {
     _contents=contents;
+  }
+
+  /**
+   * Get the entries to delete.
+   * @return the entries to delete.
+   */
+  public List<String> getEntriesToDelete()
+  {
+    return new ArrayList<String>(_toDelete);
+  }
+
+  /**
+   * Add an entry to delete.
+   * @param path Path to delete.
+   */
+  public void addEntryToDelete(String path)
+  {
+    _toDelete.add(path);
   }
 
   @Override

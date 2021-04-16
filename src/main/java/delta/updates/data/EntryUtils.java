@@ -14,7 +14,7 @@ public class EntryUtils
   public static String getPath(DirectoryEntryDescription entry)
   {
     DirectoryDescription parent=entry.getParent();
-    if (parent==null)
+    if ((parent==null) || (parent.getName().length()==0))
     {
       return entry.getName();
     }

@@ -50,11 +50,15 @@ public class PackagesBuilder
     software.setDescriptionURL(urlOfDescription);
     for(SoftwarePackageDescription packageDescription : packages)
     {
-      // Package
       SoftwareReference packageReference=packageDescription.getReference();
       int packageId=packageReference.getId();
-      String packageSourceURL=baseURL+"packages/"+packageId+".zip";
-      packageDescription.addSourceURL(packageSourceURL);
+      // Package
+      ArchivedContents contents=packageDescription.getContents();
+      if (contents!=null)
+      {
+        String packageSourceURL=baseURL+"packages/"+packageId+".zip";
+        packageDescription.addSourceURL(packageSourceURL);
+      }
       // Usage
       SoftwarePackageUsage usage=new SoftwarePackageUsage(packageDescription.getReference());
       usage.setRelativePath(".");
@@ -97,21 +101,19 @@ public class PackagesBuilder
    */
   public SoftwarePackageDescription buildPackage(int packageID, String packageName, DirectoryDescription directoryEntry)
   {
-    // Remove from parent
-    DirectoryDescription parent=directoryEntry.getParent();
-    if (parent!=null)
+    ArchivedContents contents=null;
+    if (directoryEntry!=null)
     {
-      parent.removeEntry(directoryEntry.getName());
+      // Remove from parent
+      DirectoryDescription parent=directoryEntry.getParent();
+      if (parent!=null)
+      {
+        parent.removeEntry(directoryEntry.getName());
+      }
+      // Build archive
+      contents=buildArchivedContents(packageID,packageName,directoryEntry);
     }
-    // Build archive
-    ArchivedContents contents=buildArchivedContents(packageID,packageName,directoryEntry);
     // Build package
-    SoftwarePackageDescription packageDescription=buildPackage(directoryEntry,contents,packageID,packageName);
-    return packageDescription;
-  }
-
-  private SoftwarePackageDescription buildPackage(DirectoryDescription rootEntry, ArchivedContents contents, int packageID, String packageName)
-  {
     SoftwarePackageDescription packageDescription=new SoftwarePackageDescription();
     SoftwareReference ref=new SoftwareReference(packageID);
     ref.setName(packageName);

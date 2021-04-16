@@ -44,6 +44,11 @@ public class PackagesWorkspace
   {
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
     List<String> sourceURLs=packageDescription.getSourceURLs();
+    if (sourceURLs.size()==0)
+    {
+      // Deletes only, no archive
+      return true;
+    }
     SoftwareReference packageReference=packageUsage.getPackage();
     boolean ok=false;
     for(String sourceURL : sourceURLs)

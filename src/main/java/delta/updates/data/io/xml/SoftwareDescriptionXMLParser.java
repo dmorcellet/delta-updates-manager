@@ -95,6 +95,13 @@ public class SoftwareDescriptionXMLParser
       ArchivedContents contents=ContentsXMLParser.parseContentsDescriptionTag(contentsTags);
       ret.setContents(contents);
     }
+    // Entries to delete
+    List<Element> deleteTags=DOMParsingTools.getChildTagsByName(root,SoftwareDescriptionXMLConstants.DELETE_TAG);
+    for(Element deleteTag : deleteTags)
+    {
+      String path=DOMParsingTools.getStringAttribute(deleteTag.getAttributes(),SoftwareDescriptionXMLConstants.DELETE_PATH_ATTR,"");
+      ret.addEntryToDelete(path);
+    }
     return ret;
   }
 

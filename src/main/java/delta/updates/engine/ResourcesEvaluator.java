@@ -58,10 +58,13 @@ public class ResourcesEvaluator
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
     ArchivedContents contents=packageDescription.getContents();
     long expandedSize=0;
-    for(DirectoryEntryDescription entry : contents.getEntries())
+    if (contents!=null)
     {
-      long entrySize=getEntrySize(entry);
-      expandedSize+=entrySize;
+      for(DirectoryEntryDescription entry : contents.getEntries())
+      {
+        long entrySize=getEntrySize(entry);
+        expandedSize+=entrySize;
+      }
     }
     long total=packageSize+expandedSize;
     return total;
@@ -92,6 +95,10 @@ public class ResourcesEvaluator
   {
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
     ArchivedContents contents=packageDescription.getContents();
+    if (contents==null)
+    {
+      return 0;
+    }
     FileDescription dataFile=contents.getDataFile();
     long packageSize=dataFile.getSize();
     return packageSize;

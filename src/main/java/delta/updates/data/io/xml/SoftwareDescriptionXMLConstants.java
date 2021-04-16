@@ -65,4 +65,13 @@ public class SoftwareDescriptionXMLConstants
    * Tag 'sourceURL', attribute 'url'.
    */
   public static final String URL_ATTR="URL";
+
+  /**
+   * Tag 'delete'.
+   */
+  public static final String DELETE_TAG="delete";
+  /**
+   * Tag 'delete', attribute 'path'.
+   */
+  public static final String DELETE_PATH_ATTR="path";
 }

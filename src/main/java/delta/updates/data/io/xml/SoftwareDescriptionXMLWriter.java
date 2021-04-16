@@ -105,7 +105,18 @@ public class SoftwareDescriptionXMLWriter
     }
     // Contents
     ArchivedContents contents=packageDescription.getContents();
-    ContentsXMLWriter.writeContents(hd,contents);
+    if (contents!=null)
+    {
+      ContentsXMLWriter.writeContents(hd,contents);
+    }
+    // Entries to delete
+    for(String path : packageDescription.getEntriesToDelete())
+    {
+      AttributesImpl deleteAttrs=new AttributesImpl();
+      deleteAttrs.addAttribute("","",SoftwareDescriptionXMLConstants.DELETE_PATH_ATTR,XmlWriter.CDATA,path);
+      hd.startElement("","",SoftwareDescriptionXMLConstants.DELETE_TAG,deleteAttrs);
+      hd.endElement("","",SoftwareDescriptionXMLConstants.DELETE_TAG);
+    }
     hd.endElement("","",SoftwareDescriptionXMLConstants.PACKAGE_TAG);
   }
 

@@ -1,6 +1,7 @@
 package delta.updates.engine;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -65,8 +66,12 @@ public class PackageIntegrator
     {
       SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
       ArchivedContents contents=packageDescription.getContents();
-      File packageDir=_workspace.getPackageRootDir(packageUsage.getPackage());
-      applyUpdates(contents,packageDir);
+      if (contents!=null)
+      {
+        File packageDir=_workspace.getPackageRootDir(packageUsage.getPackage());
+        applyUpdates(contents,packageDir);
+      }
+      applyDeletes(packageDescription.getEntriesToDelete());
       ok=true;
     }
     catch(Exception e)
@@ -79,9 +84,12 @@ public class PackageIntegrator
 
   private void applyUpdates(ArchivedContents contents, File packageDir)
   {
-    for(DirectoryEntryDescription entry : contents.getEntries())
+    if (contents!=null)
     {
-      apply(entry,packageDir);
+      for(DirectoryEntryDescription entry : contents.getEntries())
+      {
+        apply(entry,packageDir);
+      }
     }
   }
 
@@ -118,6 +126,28 @@ public class PackageIntegrator
       for(DirectoryEntryDescription childEntry : directory.getEntries())
       {
         apply(childEntry,packageDir);
+      }
+    }
+  }
+
+  private void applyDeletes(List<String> paths)
+  {
+    for(String path : paths)
+    {
+      applyDelete(path);
+    }
+  }
+
+  private void applyDelete(String path)
+  {
+    File toDir=_localData.getRootDir();
+    File to=new File(toDir,path);
+    if (to.exists())
+    {
+      boolean ok=to.delete();
+      if (!ok)
+      {
+        throw new IllegalStateException("Cannot delete file "+to);
       }
     }
   }

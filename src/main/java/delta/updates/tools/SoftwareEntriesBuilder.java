@@ -38,11 +38,17 @@ public class SoftwareEntriesBuilder
 
   private void handlePackage(SoftwarePackageDescription packageDescription)
   {
+    // Adds and updates
     ArchivedContents contents=packageDescription.getContents();
-    for(DirectoryEntryDescription entry : contents.getEntries())
+    if (contents!=null)
     {
-      handleEntry(entry);
+      for(DirectoryEntryDescription entry : contents.getEntries())
+      {
+        handleEntry(entry);
+      }
     }
+    // Delete
+    // TODO
   }
 
   private void handleEntry(DirectoryEntryDescription entry)
