@@ -3,9 +3,15 @@ package delta.updates.engine;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
+
 import delta.downloads.Downloader;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.engine.listener.UpdateStatus;
+import delta.updates.engine.listener.UpdateStatusController;
+import delta.updates.ui.UpdateStatusUIController;
 import delta.updates.ui.UpdateUI;
 
 /**
@@ -49,13 +55,67 @@ public class UpdateController
     boolean updateAllowed=UpdateUI.askForUpdate(localSoftware,remoteSoftware,assessment);
     if (updateAllowed)
     {
-      for(SoftwarePackageUsage packageUsage : neededPackages)
-      {
-        _engine.handlePackage(packageUsage);
-      }
-      localSoftware.setVersion(remoteSoftware.getVersion());
-      local.writeSoftware();
+      showUI();
+      performUpdate(localSoftware,remoteSoftware,neededPackages);
     }
     _engine.cleanup();
+  }
+
+  private void performUpdate(SoftwareDescription localSoftware, SoftwareDescription remoteSoftware, List<SoftwarePackageUsage> neededPackages)
+  {
+    boolean processOK=true;
+    for(SoftwarePackageUsage packageUsage : neededPackages)
+    {
+      boolean ok=_engine.handlePackage(packageUsage);
+      if (!ok)
+      {
+        processOK=false;
+        break;
+      }
+    }
+    if (processOK)
+    {
+      localSoftware.setVersion(remoteSoftware.getVersion());
+      LocalDataManager local=_engine.getLocalDataManager();
+      boolean ok=local.writeSoftware();
+      UpdateStatusController statusController=_engine.getStatusController();
+      if (ok)
+      {
+        String endMessage="Updated finished!";
+        statusController.setImportStatus(UpdateStatus.FINISHED,endMessage);
+      }
+      else
+      {
+        String endMessage="Updated failed!";
+        statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
+      }
+    }
+  }
+
+  private void showUI()
+  {
+    final UpdateStatusUIController updateStatusUIController=new UpdateStatusUIController(UpdateController.this);
+    UpdateStatusController statusController=_engine.getStatusController();
+    statusController.setListener(updateStatusUIController);
+    Runnable r=new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        JDialog dialog=updateStatusUIController.getDialog();
+        dialog.setModal(true);
+        dialog.setVisible(true);
+      }
+    };
+    SwingUtilities.invokeLater(r);
+  }
+
+  /**
+   * Request update cancellation.
+   */
+  public void cancel()
+  {
+    // TODO
+    System.out.println("Cancellation requested!");
   }
 }

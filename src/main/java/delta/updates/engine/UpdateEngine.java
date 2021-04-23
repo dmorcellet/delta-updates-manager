@@ -11,6 +11,8 @@ import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.SoftwareReference;
 import delta.updates.data.Version;
+import delta.updates.engine.listener.UpdateStatus;
+import delta.updates.engine.listener.UpdateStatusController;
 
 /**
  * Update engine.
@@ -20,9 +22,12 @@ public class UpdateEngine
 {
   private static final Logger LOGGER=Logger.getLogger(UpdateEngine.class);
 
+  // Data
   private LocalDataManager _localData;
   private RemoteDataManager _remoteData;
   private PackagesWorkspace _workspace;
+  // Status management
+  private UpdateStatusController _statusController;
 
   /**
    * Constructor.
@@ -34,7 +39,17 @@ public class UpdateEngine
     _remoteData=new RemoteDataManager(downloader);
     _localData=new LocalDataManager(rootAppDir);
     File tmpDir=new File("__tmp");
-    _workspace=new PackagesWorkspace(downloader,tmpDir);
+    _statusController=new UpdateStatusController();
+    _workspace=new PackagesWorkspace(downloader,tmpDir,_statusController);
+  }
+
+  /**
+   * Get the update status controller.
+   * @return the update status controller.
+   */
+  public UpdateStatusController getStatusController()
+  {
+    return _statusController;
   }
 
   /**
@@ -136,8 +151,22 @@ public class UpdateEngine
     // Check package
     // TODO Later
     // Apply package
+    SoftwareReference packageReference=neededPackage.getPackage();
+    String packageName=packageReference.getName();
+    String message="Integrating package '"+packageName+"'";
+    _statusController.setImportStatus(UpdateStatus.RUNNING,message);
     PackageIntegrator integrator=new PackageIntegrator(_localData,_workspace);
     ok=integrator.doIt(neededPackage);
+    if (ok)
+    {
+      String endMessage="Integrated package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.RUNNING,endMessage);
+    }
+    else
+    {
+      String endMessage="Failed to integrate package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
+    }
     return ok;
   }
 

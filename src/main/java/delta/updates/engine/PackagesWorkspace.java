@@ -7,11 +7,14 @@ import org.apache.log4j.Logger;
 
 import delta.common.utils.files.FilesDeleter;
 import delta.common.utils.files.archives.ArchiveDeflater;
+import delta.common.utils.misc.SleepManager;
 import delta.downloads.DownloadException;
 import delta.downloads.Downloader;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.SoftwareReference;
+import delta.updates.engine.listener.UpdateStatus;
+import delta.updates.engine.listener.UpdateStatusController;
 
 /**
  * Workspace to work with packages.
@@ -23,16 +26,19 @@ public class PackagesWorkspace
 
   private Downloader _downloader;
   private File _rootDir;
+  private UpdateStatusController _statusController;
 
   /**
    * Constructor.
    * @param downloader Downloader.
    * @param rootDir Root directory for this workspace.
+   * @param statusController Status controller.
    */
-  public PackagesWorkspace(Downloader downloader, File rootDir)
+  public PackagesWorkspace(Downloader downloader, File rootDir, UpdateStatusController statusController)
   {
     _downloader=downloader;
     _rootDir=rootDir;
+    _statusController=statusController;
   }
 
   /**
@@ -76,16 +82,30 @@ public class PackagesWorkspace
 
   private boolean downloadPackage(SoftwareReference packageReference, String url)
   {
+    String packageName=packageReference.getName();
+    String message="Downloading package '"+packageName+"'";
+    _statusController.setImportStatus(UpdateStatus.RUNNING,message);
     File packageArchiveFile=getPackageArchiveFile(packageReference);
     packageArchiveFile.getParentFile().mkdirs();
     boolean ok=false;
     try
     {
       ok=_downloader.downloadToFile(url,packageArchiveFile);
+      SleepManager.sleep(2000);
     }
     catch(DownloadException downloadException)
     {
       LOGGER.warn("Could not download package froml: "+url,downloadException);
+    }
+    if (ok)
+    {
+      String endMessage="Downloaded package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.RUNNING,endMessage);
+    }
+    else
+    {
+      String endMessage="Failed to download package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
     }
     return ok;
   }
@@ -97,10 +117,23 @@ public class PackagesWorkspace
    */
   private boolean expandPackage(SoftwareReference packageReference)
   {
+    String packageName=packageReference.getName();
+    String message="Expanding package '"+packageName+"'";
+    _statusController.setImportStatus(UpdateStatus.RUNNING,message);
     File packageArchiveFile=getPackageArchiveFile(packageReference);
     File rootDir=getPackageRootDir(packageReference);
     ArchiveDeflater deflated=new ArchiveDeflater(packageArchiveFile,rootDir);
     boolean ok=deflated.go();
+    if (ok)
+    {
+      String endMessage="Expanded package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.RUNNING,endMessage);
+    }
+    else
+    {
+      String endMessage="Failed to expand package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
+    }
     return ok;
   }
 
