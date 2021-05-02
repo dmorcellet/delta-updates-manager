@@ -14,8 +14,8 @@ public class MainTestUpdateController
    */
   public static void main(String[] args)
   {
+    UpdateController ctrl=new UpdateController();
     File rootAppDir=new File("d:/tmp/lc15");
-    UpdateController ctrl=new UpdateController(rootAppDir);
-    ctrl.doIt();
+    ctrl.doIt(rootAppDir);
   }
 }

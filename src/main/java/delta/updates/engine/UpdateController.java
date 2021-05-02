@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
-import delta.downloads.Downloader;
+import delta.downloads.async.DownloadsManager;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.engine.listener.UpdateStatus;
@@ -29,34 +29,26 @@ public class UpdateController
   private UpdateEngine _engine;
 
   /**
-   * Constructor.
+   * Perform update.
    * @param rootAppDir Root application directory.
    */
-  public UpdateController(File rootAppDir)
+  public void doIt(File rootAppDir)
   {
-    Downloader downloader=new Downloader();
+    DownloadsManager downloader=new DownloadsManager();
     _engine=new UpdateEngine(rootAppDir,downloader);
-  }
-
-  /**
-   * Perform update.
-   */
-  public void doIt()
-  {
     SoftwareDescription remoteSoftware=_engine.lookForUpdate();
-    if (remoteSoftware==null)
+    if (remoteSoftware!=null)
     {
-      return;
-    }
-    List<SoftwarePackageUsage> neededPackages=_engine.getNeededPackages(remoteSoftware);
-    LocalDataManager local=_engine.getLocalDataManager();
-    SoftwareDescription localSoftware=local.getSoftware();
-    ResourcesAssessment assessment=_engine.assessResources(neededPackages);
-    boolean updateAllowed=UpdateUI.askForUpdate(localSoftware,remoteSoftware,assessment);
-    if (updateAllowed)
-    {
-      showUI();
-      performUpdate(localSoftware,remoteSoftware,neededPackages);
+      List<SoftwarePackageUsage> neededPackages=_engine.getNeededPackages(remoteSoftware);
+      LocalDataManager local=_engine.getLocalDataManager();
+      SoftwareDescription localSoftware=local.getSoftware();
+      ResourcesAssessment assessment=_engine.assessResources(neededPackages);
+      boolean updateAllowed=UpdateUI.askForUpdate(localSoftware,remoteSoftware,assessment);
+      if (updateAllowed)
+      {
+        showUI();
+        performUpdate(localSoftware,remoteSoftware,neededPackages);
+      }
     }
     _engine.cleanup();
   }

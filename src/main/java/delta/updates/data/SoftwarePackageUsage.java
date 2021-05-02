@@ -82,4 +82,10 @@ public class SoftwarePackageUsage
   {
     _detailedDescription=detailedDescription; 
   }
+
+  @Override
+  public String toString()
+  {
+    return (_package!=null)?_package.toString():"?";
+  }
 }

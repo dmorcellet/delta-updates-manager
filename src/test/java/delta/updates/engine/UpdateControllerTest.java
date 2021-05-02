@@ -15,8 +15,8 @@ public class UpdateControllerTest extends TestCase
    */
   public void testUpdate()
   {
+    UpdateController ctrl=new UpdateController();
     File rootAppDir=new File("d:/tmp/lc15");
-    UpdateController ctrl=new UpdateController(rootAppDir);
-    ctrl.doIt();
+    ctrl.doIt(rootAppDir);
   }
 }

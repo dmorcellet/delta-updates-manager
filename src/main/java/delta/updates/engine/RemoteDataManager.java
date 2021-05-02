@@ -6,8 +6,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import delta.common.utils.xml.DOMParsingTools;
-import delta.downloads.DownloadException;
-import delta.downloads.Downloader;
+import delta.downloads.async.DownloadsManager;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
@@ -25,13 +24,13 @@ public class RemoteDataManager
 {
   private static final Logger LOGGER=Logger.getLogger(RemoteDataManager.class);
 
-  private Downloader _downloader;
+  private DownloadsManager _downloader;
 
   /**
    * Constructor.
    * @param downloader Downloader.
    */
-  public RemoteDataManager(Downloader downloader)
+  public RemoteDataManager(DownloadsManager downloader)
   {
     _downloader=downloader;
   }
@@ -66,6 +65,10 @@ public class RemoteDataManager
       packageUsage.setDetailedDescription(packageDescription);
       return true;
     }
+    else
+    {
+      LOGGER.warn("Could not find package description for "+packageUsage);
+    }
     return false;
   }
 
@@ -98,15 +101,7 @@ public class RemoteDataManager
 
   private byte[] downloadData(String url)
   {
-    byte[] buffer=null;
-    try
-    {
-      buffer=_downloader.downloadBuffer(url);
-    }
-    catch(DownloadException downloadException)
-    {
-      LOGGER.error("Download error for "+url,downloadException);
-    }
+    byte[] buffer=_downloader.syncDownloadBuffer(url,null);
     return buffer;
   }
 }

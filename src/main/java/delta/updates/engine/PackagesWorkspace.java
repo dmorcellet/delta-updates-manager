@@ -7,9 +7,10 @@ import org.apache.log4j.Logger;
 
 import delta.common.utils.files.FilesDeleter;
 import delta.common.utils.files.archives.ArchiveDeflater;
-import delta.common.utils.misc.SleepManager;
-import delta.downloads.DownloadException;
-import delta.downloads.Downloader;
+import delta.downloads.async.DownloadsManager;
+import delta.downloads.async.DownloadListener;
+import delta.downloads.async.DownloadState;
+import delta.downloads.async.DownloadTask;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.SoftwareReference;
@@ -24,7 +25,7 @@ public class PackagesWorkspace
 {
   private static final Logger LOGGER=Logger.getLogger(PackagesWorkspace.class);
 
-  private Downloader _downloader;
+  private DownloadsManager _downloader;
   private File _rootDir;
   private UpdateStatusController _statusController;
 
@@ -34,7 +35,7 @@ public class PackagesWorkspace
    * @param rootDir Root directory for this workspace.
    * @param statusController Status controller.
    */
-  public PackagesWorkspace(Downloader downloader, File rootDir, UpdateStatusController statusController)
+  public PackagesWorkspace(DownloadsManager downloader, File rootDir, UpdateStatusController statusController)
   {
     _downloader=downloader;
     _rootDir=rootDir;
@@ -82,21 +83,36 @@ public class PackagesWorkspace
 
   private boolean downloadPackage(SoftwareReference packageReference, String url)
   {
-    String packageName=packageReference.getName();
+    final String packageName=packageReference.getName();
     String message="Downloading package '"+packageName+"'";
     _statusController.setImportStatus(UpdateStatus.RUNNING,message);
     File packageArchiveFile=getPackageArchiveFile(packageReference);
     packageArchiveFile.getParentFile().mkdirs();
-    boolean ok=false;
-    try
+
+    DownloadListener listener=new DownloadListener()
     {
-      ok=_downloader.downloadToFile(url,packageArchiveFile);
-      SleepManager.sleep(2000);
-    }
-    catch(DownloadException downloadException)
-    {
-      LOGGER.warn("Could not download package froml: "+url,downloadException);
-    }
+      @Override
+      public void downloadTaskUpdated(DownloadTask task)
+      {
+        DownloadState state=task.getDownloadState();
+        if (state==DownloadState.RUNNING)
+        {
+          Integer expectedSize=task.getExpectedSize();
+          int doneSize=task.getDoneSize();
+          String percentageStr="? %";
+          if (expectedSize!=null)
+          {
+            float percentage=(100.0f*doneSize)/expectedSize.intValue();
+            percentageStr=String.format("%.1f%%",Float.valueOf(percentage));
+          }
+          String progressMessage="Downloading package '"+packageName+"': "+percentageStr;
+          _statusController.setImportStatus(UpdateStatus.RUNNING,progressMessage);
+        }
+      }
+    };
+    DownloadTask task=_downloader.syncDownload(url,packageArchiveFile,listener);
+    DownloadState state=task.getDownloadState();
+    boolean ok=(state==DownloadState.OK);
     if (ok)
     {
       String endMessage="Downloaded package '"+packageName+"'";

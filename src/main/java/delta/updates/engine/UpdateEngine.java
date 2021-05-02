@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import delta.downloads.Downloader;
+import delta.downloads.async.DownloadsManager;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.SoftwareReference;
@@ -26,6 +26,8 @@ public class UpdateEngine
   private LocalDataManager _localData;
   private RemoteDataManager _remoteData;
   private PackagesWorkspace _workspace;
+  // Services
+  private DownloadsManager _downloadsMgr;
   // Status management
   private UpdateStatusController _statusController;
 
@@ -34,8 +36,9 @@ public class UpdateEngine
    * @param rootAppDir Root application directory.
    * @param downloader Downloader.
    */
-  public UpdateEngine(File rootAppDir, Downloader downloader)
+  public UpdateEngine(File rootAppDir, DownloadsManager downloader)
   {
+    _downloadsMgr=downloader;
     _remoteData=new RemoteDataManager(downloader);
     _localData=new LocalDataManager(rootAppDir);
     File tmpDir=new File("__tmp");
@@ -176,5 +179,6 @@ public class UpdateEngine
   public void cleanup()
   {
     _workspace.cleanup();
+    _downloadsMgr.dispose();
   }
 }
