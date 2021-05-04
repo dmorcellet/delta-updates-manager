@@ -77,7 +77,6 @@ public class PackagesWorkspace
     }
     // Expand
     ok=expandPackage(packageReference);
-    // TODO Check: size, contents
     return true;
   }
 

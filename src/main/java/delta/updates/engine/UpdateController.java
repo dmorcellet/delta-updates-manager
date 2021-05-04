@@ -55,32 +55,38 @@ public class UpdateController
 
   private void performUpdate(SoftwareDescription localSoftware, SoftwareDescription remoteSoftware, List<SoftwarePackageUsage> neededPackages)
   {
-    boolean processOK=true;
+    // Download packages
     for(SoftwarePackageUsage packageUsage : neededPackages)
     {
-      boolean ok=_engine.handlePackage(packageUsage);
+      boolean ok=_engine.downloadPackage(packageUsage);
       if (!ok)
       {
-        processOK=false;
-        break;
+        return;
       }
     }
-    if (processOK)
+    // Integrate packages
+    for(SoftwarePackageUsage packageUsage : neededPackages)
     {
-      localSoftware.setVersion(remoteSoftware.getVersion());
-      LocalDataManager local=_engine.getLocalDataManager();
-      boolean ok=local.writeSoftware();
-      UpdateStatusController statusController=_engine.getStatusController();
-      if (ok)
+      boolean ok=_engine.integratePackage(packageUsage);
+      if (!ok)
       {
-        String endMessage="Updated finished!";
-        statusController.setImportStatus(UpdateStatus.FINISHED,endMessage);
+        return;
       }
-      else
-      {
-        String endMessage="Updated failed!";
-        statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
-      }
+    }
+    // End operations
+    localSoftware.setVersion(remoteSoftware.getVersion());
+    LocalDataManager local=_engine.getLocalDataManager();
+    boolean ok=local.writeSoftware();
+    UpdateStatusController statusController=_engine.getStatusController();
+    if (ok)
+    {
+      String endMessage="Updated finished!";
+      statusController.setImportStatus(UpdateStatus.FINISHED,endMessage);
+    }
+    else
+    {
+      String endMessage="Updated failed!";
+      statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
     }
   }
 

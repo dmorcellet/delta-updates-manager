@@ -140,26 +140,41 @@ public class UpdateEngine
 
   /**
    * Handle a package update.
-   * @param neededPackage
+   * @param neededPackage Package to use.
    * @return <code>true</code> if update was successfull, <code>false</code> otherwise.
    */
-  public boolean handlePackage(SoftwarePackageUsage neededPackage)
+  public boolean downloadPackage(SoftwarePackageUsage neededPackage)
   {
     // Download package
+    SoftwareReference packageReference=neededPackage.getPackage();
+    String packageName=packageReference.getName();
     boolean ok=_workspace.getPackage(neededPackage);
     if (!ok)
     {
-      return ok;
+      String endMessage="Failed to download package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
+      return false;
     }
     // Check package
-    // TODO Later
+    // TODO Check: size, contents
+    return ok;
+  }
+
+  /**
+   * Integrate a package.
+   * Pre-requisite: the package has been downloaded/verified.
+   * @param neededPackage Package to use.
+   * @return <code>true</code> if successfull, <code>false</code> otherwise.
+   */
+  public boolean integratePackage(SoftwarePackageUsage neededPackage)
+  {
     // Apply package
     SoftwareReference packageReference=neededPackage.getPackage();
     String packageName=packageReference.getName();
     String message="Integrating package '"+packageName+"'";
     _statusController.setImportStatus(UpdateStatus.RUNNING,message);
     PackageIntegrator integrator=new PackageIntegrator(_localData,_workspace);
-    ok=integrator.doIt(neededPackage);
+    boolean ok=integrator.doIt(neededPackage);
     if (ok)
     {
       String endMessage="Integrated package '"+packageName+"'";

@@ -65,10 +65,7 @@ public class RemoteDataManager
       packageUsage.setDetailedDescription(packageDescription);
       return true;
     }
-    else
-    {
-      LOGGER.warn("Could not find package description for "+packageUsage);
-    }
+    LOGGER.warn("Could not find package description for "+packageUsage);
     return false;
   }
 
