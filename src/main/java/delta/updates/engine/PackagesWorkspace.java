@@ -7,10 +7,13 @@ import org.apache.log4j.Logger;
 
 import delta.common.utils.files.FilesDeleter;
 import delta.common.utils.files.archives.ArchiveDeflater;
+import delta.common.utils.misc.CRC;
 import delta.downloads.async.DownloadsManager;
 import delta.downloads.async.DownloadListener;
 import delta.downloads.async.DownloadState;
 import delta.downloads.async.DownloadTask;
+import delta.updates.data.ArchivedContents;
+import delta.updates.data.FileDescription;
 import delta.updates.data.SoftwarePackageDescription;
 import delta.updates.data.SoftwarePackageUsage;
 import delta.updates.data.SoftwareReference;
@@ -66,13 +69,16 @@ public class PackagesWorkspace
         break;
       }
     }
-    if (ok)
-    {
-      LOGGER.info("Download package: "+packageReference);
-    }
-    else
+    if (!ok)
     {
       LOGGER.info("Could not get package: "+packageReference);
+      return false;
+    }
+    LOGGER.info("Downloaded package: "+packageReference);
+    ok=checkPackage(packageReference,packageDescription);
+    if (!ok)
+    {
+      LOGGER.info("Package check failed for: "+packageReference);
       return false;
     }
     // Expand
@@ -123,6 +129,45 @@ public class PackagesWorkspace
       _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
     }
     return ok;
+  }
+
+  private boolean checkPackage(SoftwareReference packageReference, SoftwarePackageDescription packageDescription)
+  {
+    ArchivedContents contents=packageDescription.getContents();
+    if (contents==null)
+    {
+      return true;
+    }
+    String packageName=packageReference.getName();
+    FileDescription dataFile=contents.getDataFile();
+    // Check downloaded file
+    File packageArchiveFile=getPackageArchiveFile(packageReference);
+    // - can read
+    if (!packageArchiveFile.canRead())
+    {
+      String errorMessage="Cannot read downloaded package '"+packageName+"'";
+      _statusController.setImportStatus(UpdateStatus.FAILED,errorMessage);
+      return false;
+    }
+    // - size
+    long size=dataFile.getSize();
+    long downloadedFileSize=packageArchiveFile.length();
+    if (downloadedFileSize!=size)
+    {
+      String errorMessage="Bad size for downloadeed package '"+packageName+"': "+downloadedFileSize+"!="+size;
+      _statusController.setImportStatus(UpdateStatus.FAILED,errorMessage);
+      return false;
+    }
+    // - CRC
+    long crc=dataFile.getCRC();
+    long downloadedFileCRC=CRC.computeCRC(packageArchiveFile);
+    if (downloadedFileCRC!=crc)
+    {
+      String errorMessage="Bad CRC for downloadeed package '"+packageName+"': "+downloadedFileCRC+"!="+crc;
+      _statusController.setImportStatus(UpdateStatus.FAILED,errorMessage);
+      return false;
+    }
+    return true;
   }
 
   /**
