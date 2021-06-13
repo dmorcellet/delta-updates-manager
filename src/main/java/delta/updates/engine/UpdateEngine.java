@@ -139,13 +139,12 @@ public class UpdateEngine
   }
 
   /**
-   * Handle a package update.
+   * Download an update package.
    * @param neededPackage Package to use.
-   * @return <code>true</code> if update was successfull, <code>false</code> otherwise.
+   * @return <code>true</code> if download was successfull, <code>false</code> otherwise.
    */
   public boolean downloadPackage(SoftwarePackageUsage neededPackage)
   {
-    // Download package
     SoftwareReference packageReference=neededPackage.getPackage();
     String packageName=packageReference.getName();
     boolean ok=_workspace.getPackage(neededPackage);
@@ -155,8 +154,6 @@ public class UpdateEngine
       _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
       return false;
     }
-    // Check package
-    // TODO Check: size, contents
     return ok;
   }
 

@@ -145,8 +145,7 @@ public class PackagesWorkspace
     // - can read
     if (!packageArchiveFile.canRead())
     {
-      String errorMessage="Cannot read downloaded package '"+packageName+"'";
-      _statusController.setImportStatus(UpdateStatus.FAILED,errorMessage);
+      LOGGER.error("Cannot read downloaded package '"+packageName+"'");
       return false;
     }
     // - size
@@ -154,8 +153,7 @@ public class PackagesWorkspace
     long downloadedFileSize=packageArchiveFile.length();
     if (downloadedFileSize!=size)
     {
-      String errorMessage="Bad size for downloadeed package '"+packageName+"': "+downloadedFileSize+"!="+size;
-      _statusController.setImportStatus(UpdateStatus.FAILED,errorMessage);
+      LOGGER.error("Bad size for downloadeed package '"+packageName+"': "+downloadedFileSize+"!="+size);
       return false;
     }
     // - CRC
@@ -163,8 +161,7 @@ public class PackagesWorkspace
     long downloadedFileCRC=CRC.computeCRC(packageArchiveFile);
     if (downloadedFileCRC!=crc)
     {
-      String errorMessage="Bad CRC for downloadeed package '"+packageName+"': "+downloadedFileCRC+"!="+crc;
-      _statusController.setImportStatus(UpdateStatus.FAILED,errorMessage);
+      LOGGER.error("Bad CRC for downloadeed package '"+packageName+"': "+downloadedFileCRC+"!="+crc);
       return false;
     }
     return true;
@@ -191,8 +188,7 @@ public class PackagesWorkspace
     }
     else
     {
-      String endMessage="Failed to expand package '"+packageName+"'";
-      _statusController.setImportStatus(UpdateStatus.FAILED,endMessage);
+      LOGGER.error("Failed to expand package '"+packageName+"'");
     }
     return ok;
   }
