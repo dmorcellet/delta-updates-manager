@@ -72,9 +72,6 @@ public class SoftwareDescriptionXMLWriter
     // Reference
     SoftwareReference packageReference=packageUsage.getPackage();
     writePackageReference(attrs,packageReference);
-    // Relative path
-    String relativePath=packageUsage.getRelativePath();
-    attrs.addAttribute("","",SoftwareDescriptionXMLConstants.PACKAGE_USAGE_RELATIVE_PATH_ATTR,XmlWriter.CDATA,relativePath);
     // Description URL
     String url=packageUsage.getDescriptionURL();
     attrs.addAttribute("","",SoftwareDescriptionXMLConstants.PACKAGE_USAGE_URL_ATTR,XmlWriter.CDATA,url);

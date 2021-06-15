@@ -61,9 +61,6 @@ public class SoftwareDescriptionXMLParser
     // Reference
     SoftwareReference packageReference=parsePackageReference(packageUsageTag);
     SoftwarePackageUsage ret=new SoftwarePackageUsage(packageReference);
-    // Relative path
-    String relativePath=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.PACKAGE_USAGE_RELATIVE_PATH_ATTR,"");
-    ret.setRelativePath(relativePath);
     // Description URL
     String descriptionURL=DOMParsingTools.getStringAttribute(attrs,SoftwareDescriptionXMLConstants.PACKAGE_USAGE_URL_ATTR,"");
     ret.setDescriptionURL(descriptionURL);

@@ -49,10 +49,6 @@ public class SoftwareDescriptionXMLConstants
    */
   public static final String PACKAGE_USAGE_TAG="packageUsage";
   /**
-   * Tag 'packageUsage', attribute 'relativePath'.
-   */
-  public static final String PACKAGE_USAGE_RELATIVE_PATH_ATTR="relativePath";
-  /**
    * Tag 'packageUsage', attribute 'descriptionUrl'.
    */
   public static final String PACKAGE_USAGE_URL_ATTR="descriptionUrl";

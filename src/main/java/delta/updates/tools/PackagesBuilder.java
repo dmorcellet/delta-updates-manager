@@ -61,7 +61,6 @@ public class PackagesBuilder
       }
       // Usage
       SoftwarePackageUsage usage=new SoftwarePackageUsage(packageDescription.getReference());
-      usage.setRelativePath(".");
       String packageDescriptionURL=baseURL+"packages/"+packageId+".xml";
       usage.setDescriptionURL(packageDescriptionURL);
       usage.setDetailedDescription(packageDescription);

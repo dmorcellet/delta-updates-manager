@@ -40,7 +40,6 @@ public class SoftwareDescriptionXmlIOTest extends TestCase
     software.setDescriptionURL("http://localhost:8080/delta-web-genea-1.1-SNAPSHOT/app/software.xml");
     // Packages
     SoftwarePackageUsage dataPackageUsage=new SoftwarePackageUsage(_package.getReference());
-    dataPackageUsage.setRelativePath("data");
     dataPackageUsage.setDescriptionURL("http://localhost:8080/delta-web-genea-1.1-SNAPSHOT/app/package1.xml");
     software.addPackage(dataPackageUsage);
     File file=new File("lotrocompanion.xml");

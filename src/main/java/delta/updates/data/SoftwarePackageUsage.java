@@ -7,7 +7,6 @@ package delta.updates.data;
 public class SoftwarePackageUsage
 {
   private SoftwareReference _package;
-  private String _relativePath;
   private String _descriptionURL;
   private SoftwarePackageDescription _detailedDescription;
 
@@ -27,24 +26,6 @@ public class SoftwarePackageUsage
   public SoftwareReference getPackage()
   {
     return _package;
-  }
-
-  /**
-   * Get the root path of package, relative to root installation directory.
-   * @return a relative path.
-   */
-  public String getRelativePath()
-  {
-    return _relativePath;
-  }
-
-  /**
-   * Set the relative path.
-   * @param relativePath Relative path to set.
-   */
-  public void setRelativePath(String relativePath)
-  {
-    _relativePath=relativePath;
   }
 
   /**
