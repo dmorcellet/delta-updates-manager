@@ -34,7 +34,7 @@ public class UpdateOperationsBuilderTest extends TestCase
    */
   public void testComputeDiff_StandardCase()
   {
-    File rootDir1=new File("D:/shared/damien/dev/lotrocompanion/releases/13.0.28.0/LotRO Companion/app");
+    File rootDir1=new File("D:/shared/damien/dev/lotrocompanion/releases/15.0/LotRO Companion/app");
     File rootDir2=new File("D:/shared/damien/dev/lotrocompanion/releases/14.0/LotRO Companion/app");
     DescriptionBuilder builder=new DescriptionBuilder();
     DirectoryEntryDescription entry1=builder.build(rootDir1);

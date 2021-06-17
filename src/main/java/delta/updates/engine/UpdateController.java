@@ -6,6 +6,8 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
+
 import delta.downloads.async.DownloadsManager;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageUsage;
@@ -26,6 +28,8 @@ import delta.updates.ui.UpdateUI;
  */
 public class UpdateController
 {
+  private static final Logger LOGGER=Logger.getLogger(UpdateController.class);
+
   private UpdateEngine _engine;
 
   /**
@@ -35,22 +39,30 @@ public class UpdateController
   public void doIt(File rootAppDir)
   {
     DownloadsManager downloader=new DownloadsManager();
-    _engine=new UpdateEngine(rootAppDir,downloader);
-    SoftwareDescription remoteSoftware=_engine.lookForUpdate();
-    if (remoteSoftware!=null)
+    try
     {
-      List<SoftwarePackageUsage> neededPackages=_engine.getNeededPackages(remoteSoftware);
-      LocalDataManager local=_engine.getLocalDataManager();
-      SoftwareDescription localSoftware=local.getSoftware();
-      ResourcesAssessment assessment=_engine.assessResources(neededPackages);
-      boolean updateAllowed=UpdateUI.askForUpdate(localSoftware,remoteSoftware,assessment);
-      if (updateAllowed)
+      _engine=new UpdateEngine(rootAppDir,downloader);
+      SoftwareDescription remoteSoftware=_engine.lookForUpdate();
+      if (remoteSoftware!=null)
       {
-        showUI();
-        performUpdate(localSoftware,remoteSoftware,neededPackages);
+        List<SoftwarePackageUsage> neededPackages=_engine.getNeededPackages(remoteSoftware);
+        LocalDataManager local=_engine.getLocalDataManager();
+        SoftwareDescription localSoftware=local.getSoftware();
+        ResourcesAssessment assessment=_engine.assessResources(neededPackages);
+        boolean updateAllowed=UpdateUI.askForUpdate(localSoftware,remoteSoftware,assessment);
+        if (updateAllowed)
+        {
+          showUI();
+          performUpdate(localSoftware,remoteSoftware,neededPackages);
+        }
       }
+      _engine.cleanup();
     }
-    _engine.cleanup();
+    finally
+    {
+      LOGGER.info("Disposing downloader!");
+      downloader.dispose();
+    }
   }
 
   private void performUpdate(SoftwareDescription localSoftware, SoftwareDescription remoteSoftware, List<SoftwarePackageUsage> neededPackages)
