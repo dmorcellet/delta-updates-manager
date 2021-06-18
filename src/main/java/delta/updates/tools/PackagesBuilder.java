@@ -46,7 +46,7 @@ public class PackagesBuilder
   {
     // Update software description
     String baseURL=_config.getBaseURL();
-    String urlOfDescription=baseURL+"software.xml";
+    String urlOfDescription=baseURL.replace("${file}","software.xml");
     software.setDescriptionURL(urlOfDescription);
     for(SoftwarePackageDescription packageDescription : packages)
     {
@@ -56,12 +56,12 @@ public class PackagesBuilder
       ArchivedContents contents=packageDescription.getContents();
       if (contents!=null)
       {
-        String packageSourceURL=baseURL+"packages/"+packageId+".zip";
+        String packageSourceURL=baseURL.replace("${file}","packages/"+packageId+".zip");
         packageDescription.addSourceURL(packageSourceURL);
       }
       // Usage
       SoftwarePackageUsage usage=new SoftwarePackageUsage(packageDescription.getReference());
-      String packageDescriptionURL=baseURL+"packages/"+packageId+".xml";
+      String packageDescriptionURL=baseURL.replace("${file}","packages/"+packageId+".xml");
       usage.setDescriptionURL(packageDescriptionURL);
       usage.setDetailedDescription(packageDescription);
       software.addPackage(usage);
