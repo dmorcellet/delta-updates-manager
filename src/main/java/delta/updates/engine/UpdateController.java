@@ -39,9 +39,9 @@ public class UpdateController
   public void doIt(File rootAppDir)
   {
     DownloadsManager downloader=new DownloadsManager();
+    _engine=new UpdateEngine(rootAppDir,downloader);
     try
     {
-      _engine=new UpdateEngine(rootAppDir,downloader);
       SoftwareDescription remoteSoftware=_engine.lookForUpdate();
       if (remoteSoftware!=null)
       {
@@ -56,12 +56,14 @@ public class UpdateController
           performUpdate(localSoftware,remoteSoftware,neededPackages);
         }
       }
-      _engine.cleanup();
+    }
+    catch(Exception e)
+    {
+      LOGGER.warn("Error in update!");
     }
     finally
     {
-      LOGGER.info("Disposing downloader!");
-      downloader.dispose();
+      _engine.cleanup();
     }
   }
 

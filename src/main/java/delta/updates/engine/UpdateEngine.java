@@ -132,7 +132,11 @@ public class UpdateEngine
       {
         ret.add(remotePackage);
         // Find package details
-        _remoteData.resolvePackage(remotePackage);
+        boolean ok=_remoteData.resolvePackage(remotePackage);
+        if (!ok)
+        {
+          throw new IllegalStateException("Cannot resolve package: "+packageReference);
+        }
       }
     }
     return ret;
@@ -190,6 +194,7 @@ public class UpdateEngine
    */
   public void cleanup()
   {
+    LOGGER.debug("Engine cleanup!");
     _workspace.cleanup();
     _downloadsMgr.dispose();
   }
