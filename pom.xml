@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>delta-updates-manager</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>Updates manager</name>
+  <version>1.0</version>
+  <name>updates-manager</name>
   <parent>
     <groupId>com.dam.delta4j</groupId>
     <artifactId>maven-definitions</artifactId>
@@ -14,12 +14,12 @@
     <dependency>
       <groupId>com.dam.delta4j</groupId>
       <artifactId>delta-downloads</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>3.1</version>
     </dependency>
     <dependency>
       <groupId>com.dam.delta4j</groupId>
       <artifactId>delta-common</artifactId>
-      <version>1.6.3</version>
+      <version>1.6.4</version>
     </dependency>
   </dependencies>
 </project>
