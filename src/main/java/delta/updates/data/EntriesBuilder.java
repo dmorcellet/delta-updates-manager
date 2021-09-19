@@ -75,6 +75,7 @@ public class EntriesBuilder
       String name=path.substring(index+Constants.PATH_ENTRY_SEPARATOR.length());
       ret.setName(name);
       ret.setParent(parentDir);
+      parentDir.removeEntry(name);
       parentDir.addEntry(ret);
     }
     else
