@@ -83,6 +83,7 @@ public class EntriesBuilder
       ret=new FileDescription();
       ret.setName(path);
       ret.setParent(_root);
+      _root.removeEntry(path);
       _root.addEntry(ret);
     }
     return ret;
