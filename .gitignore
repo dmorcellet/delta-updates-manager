@@ -1,4 +1,7 @@
 /target/
+/.settings
+/.classpath
+/.project
 /bin/
 /entries.xml
 /package.xml
