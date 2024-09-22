@@ -2,18 +2,19 @@ package delta.updates.engine;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for the update controller.
  * @author DAM
  */
-public class UpdateControllerTest extends TestCase
+class UpdateControllerTest
 {
   /**
    * Test update.
    */
-  public void testUpdate()
+  @Test
+  void testUpdate()
   {
     UpdateController ctrl=new UpdateController();
     File rootAppDir=new File("d:/tmp/lc15");

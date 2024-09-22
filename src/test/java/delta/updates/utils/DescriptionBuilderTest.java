@@ -1,27 +1,30 @@
 package delta.updates.utils;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.File;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
 import delta.updates.data.DirectoryEntryDescription;
 
 /**
  * Test the class {@link DescriptionBuilder}.
  * @author DAM
  */
-public class DescriptionBuilderTest extends TestCase
+class DescriptionBuilderTest
 {
   /**
    * Build a description of the current directory.
    */
-  public void testLoadCurrentDirectory()
+  @Test
+  void testLoadCurrentDirectory()
   {
     DescriptionBuilder builder=new DescriptionBuilder();
     File currentDir=new File(".");
     DirectoryEntryDescription description=builder.build(currentDir);
-    Assert.assertNotNull(description);
+    assertNotNull(description);
     List<String> display=new DescriptionTreeDisplay().buildTreeDisplay(description);
     for(String line : display)
     {

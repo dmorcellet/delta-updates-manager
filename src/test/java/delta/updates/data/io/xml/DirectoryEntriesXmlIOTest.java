@@ -2,20 +2,22 @@ package delta.updates.data.io.xml;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
+
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.utils.DescriptionBuilder;
-import junit.framework.TestCase;
 
 /**
  * Test class for XML I/O of directory entries.
  * @author DAM
  */
-public class DirectoryEntriesXmlIOTest extends TestCase
+class DirectoryEntriesXmlIOTest
 {
   /**
    * Test XML I/O.
    */
-  public void testXmlIO()
+  @Test
+  void testXmlIO()
   {
     DescriptionBuilder builder=new DescriptionBuilder();
     File currentDir=new File(".");

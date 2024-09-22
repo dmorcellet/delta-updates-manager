@@ -1,16 +1,19 @@
 package delta.updates.data.io.xml;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.File;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
 import delta.updates.data.ArchivedContents;
 import delta.updates.data.DirectoryEntryDescription;
 import delta.updates.data.FileDescription;
 import delta.updates.data.SoftwareDescription;
 import delta.updates.data.SoftwarePackageDescription;
-import delta.updates.data.SoftwareReference;
 import delta.updates.data.SoftwarePackageUsage;
+import delta.updates.data.SoftwareReference;
 import delta.updates.data.Version;
 import delta.updates.utils.DescriptionBuilder;
 
@@ -18,14 +21,15 @@ import delta.updates.utils.DescriptionBuilder;
  * Test class for XML I/O of software packages.
  * @author DAM
  */
-public class SoftwareDescriptionXmlIOTest extends TestCase
+class SoftwareDescriptionXmlIOTest
 {
   private SoftwarePackageDescription _package=buildPackageData();
 
   /**
    * Test XML I/O for software descriptions.
    */
-  public void testSoftwareDescriptionXmlIO()
+  @Test
+  void testSoftwareDescriptionXmlIO()
   {
     // Software description
     SoftwareDescription software=new SoftwareDescription(1000);
@@ -47,9 +51,9 @@ public class SoftwareDescriptionXmlIOTest extends TestCase
     // Read
     SoftwareDescription software2=SoftwareDescriptionXmlIO.parseSoftwareDescriptionFile(file);
     // Asserts
-    Assert.assertNotNull(software2);
-    Assert.assertEquals(software.getName(),software2.getName());
-    Assert.assertEquals(software.getContentsDescription(),software2.getContentsDescription());
+    assertNotNull(software2);
+    assertEquals(software.getName(),software2.getName());
+    assertEquals(software.getContentsDescription(),software2.getContentsDescription());
   }
 
   private SoftwarePackageDescription buildPackageData()
@@ -80,7 +84,8 @@ public class SoftwareDescriptionXmlIOTest extends TestCase
   /**
    * Test XML I/O for software packages.
    */
-  public void testSoftwarePackageXmlIO()
+  @Test
+  void testSoftwarePackageXmlIO()
   {
     File file=new File("dataPackage.xml");
     // Software package
@@ -89,9 +94,9 @@ public class SoftwareDescriptionXmlIOTest extends TestCase
     // Read
     SoftwarePackageDescription softwarePackage2=SoftwareDescriptionXmlIO.parsePackageFile(file);
     // Asserts
-    Assert.assertNotNull(softwarePackage2);
+    assertNotNull(softwarePackage2);
     SoftwareReference ref=softwarePackage.getReference();
     SoftwareReference ref2=softwarePackage2.getReference();
-    Assert.assertEquals(ref.getName(),ref2.getName());
+    assertEquals(ref.getName(),ref2.getName());
   }
 }
