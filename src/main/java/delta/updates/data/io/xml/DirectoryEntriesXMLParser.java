@@ -2,7 +2,8 @@ package delta.updates.data.io.xml;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
@@ -17,7 +18,7 @@ import delta.updates.data.FileDescription;
  */
 public class DirectoryEntriesXMLParser
 {
-  private static final Logger LOGGER=Logger.getLogger(DirectoryEntriesXMLParser.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(DirectoryEntriesXMLParser.class);
 
   /**
    * Build a directory entry from an XML tag.

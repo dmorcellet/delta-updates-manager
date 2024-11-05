@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.downloads.async.DownloadsManager;
 import delta.updates.data.SoftwareDescription;
@@ -20,7 +21,7 @@ import delta.updates.engine.listener.UpdateStatusController;
  */
 public class UpdateEngine
 {
-  private static final Logger LOGGER=Logger.getLogger(UpdateEngine.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(UpdateEngine.class);
 
   // Data
   private LocalDataManager _localData;

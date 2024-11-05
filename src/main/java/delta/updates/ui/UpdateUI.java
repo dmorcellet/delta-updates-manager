@@ -3,7 +3,8 @@ package delta.updates.ui;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.common.utils.misc.IntegerHolder;
 import delta.common.utils.text.EndOfLine;
@@ -16,7 +17,7 @@ import delta.updates.engine.ResourcesAssessment;
  */
 public class UpdateUI
 {
-  private static final Logger LOGGER=Logger.getLogger(UpdateUI.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(UpdateUI.class);
 
   /**
    * Ask if the update is allowed.

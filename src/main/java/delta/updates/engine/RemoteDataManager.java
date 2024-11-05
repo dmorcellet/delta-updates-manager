@@ -2,7 +2,8 @@ package delta.updates.engine;
 
 import java.io.ByteArrayInputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import delta.common.utils.xml.DOMParsingTools;
@@ -22,7 +23,7 @@ import delta.updates.data.io.xml.SoftwareDescriptionXMLParser;
  */
 public class RemoteDataManager
 {
-  private static final Logger LOGGER=Logger.getLogger(RemoteDataManager.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(RemoteDataManager.class);
 
   private DownloadsManager _downloader;
 
@@ -74,7 +75,7 @@ public class RemoteDataManager
     byte[] xmlDoc=downloadData(descriptionURL);
     if (xmlDoc==null)
     {
-      LOGGER.error("Could not download data from: "+descriptionURL);
+      LOGGER.error("Could not download data from: {}", descriptionURL);
       return null;
     }
     SoftwarePackageDescription ret=parseSoftwarePackageDescription(xmlDoc);

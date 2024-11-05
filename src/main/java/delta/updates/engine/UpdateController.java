@@ -6,7 +6,8 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.downloads.async.DownloadsManager;
 import delta.updates.data.SoftwareDescription;
@@ -28,7 +29,7 @@ import delta.updates.ui.UpdateUI;
  */
 public class UpdateController
 {
-  private static final Logger LOGGER=Logger.getLogger(UpdateController.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(UpdateController.class);
 
   private UpdateEngine _engine;
 

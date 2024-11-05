@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.updates.data.DirectoryDescription;
 import delta.updates.data.SoftwareDescription;
@@ -24,7 +25,7 @@ import delta.updates.tools.SoftwareEntriesBuilder;
  */
 public class LocalDataManager
 {
-  private static final Logger LOGGER=Logger.getLogger(LocalDataManager.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(LocalDataManager.class);
 
   private File _rootDir;
   private File _updatesMgrDataDir;

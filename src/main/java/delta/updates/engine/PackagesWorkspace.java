@@ -3,15 +3,16 @@ package delta.updates.engine;
 import java.io.File;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.common.utils.files.FilesDeleter;
 import delta.common.utils.files.archives.ArchiveDeflater;
 import delta.common.utils.misc.CRC;
-import delta.downloads.async.DownloadsManager;
 import delta.downloads.async.DownloadListener;
 import delta.downloads.async.DownloadState;
 import delta.downloads.async.DownloadTask;
+import delta.downloads.async.DownloadsManager;
 import delta.updates.data.ArchivedContents;
 import delta.updates.data.FileDescription;
 import delta.updates.data.SoftwarePackageDescription;
@@ -26,7 +27,7 @@ import delta.updates.engine.listener.UpdateStatusController;
  */
 public class PackagesWorkspace
 {
-  private static final Logger LOGGER=Logger.getLogger(PackagesWorkspace.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(PackagesWorkspace.class);
 
   private DownloadsManager _downloader;
   private File _rootDir;

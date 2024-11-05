@@ -3,7 +3,8 @@ package delta.updates.engine;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.updates.data.DirectoryDescription;
 import delta.updates.data.DirectoryEntryDescription;
@@ -18,7 +19,7 @@ import delta.updates.data.operations.UpdateOperations;
  */
 public class UpdateOperationsBuilder
 {
-  private static final Logger LOGGER=Logger.getLogger(UpdateOperationsBuilder.class);
+  private static final Logger LOGGER=LoggerFactory.getLogger(UpdateOperationsBuilder.class);
 
   private UpdateOperations _operations;
 
