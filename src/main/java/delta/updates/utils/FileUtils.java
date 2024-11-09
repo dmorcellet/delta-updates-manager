@@ -1,6 +1,12 @@
 package delta.updates.utils;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods related to files.
@@ -8,22 +14,33 @@ import java.io.File;
  */
 public class FileUtils
 {
+  private static final Logger LOGGER=LoggerFactory.getLogger(FileUtils.class);
+
   /**
    * Move a file from one path to another (same disk).
    * @param from From file.
    * @param to To file.
-   * @return <code>true</code> in case of success,<code>false</code> otherwise.
+   * @throws IOException If the move fails.
    */
-  public static boolean move(File from, File to)
+  public static void move(Path from, Path to) throws IOException
   {
-    if (to.exists())
+    try
     {
-      boolean ok=to.delete();
-      if (!ok)
+      if (LOGGER.isDebugEnabled())
       {
-        return false;
+        LOGGER.debug("Attempt to move '{}' to '{}'...",from,to);
+      }
+      Files.move(from,to,StandardCopyOption.REPLACE_EXISTING);
+      if (LOGGER.isInfoEnabled())
+      {
+        LOGGER.info("Moved '{}' to '{}'.",from,to);
       }
     }
-    return from.renameTo(to);
+    catch(IOException e)
+    {
+      String msg="Could not move '"+from+"' to '"+to+"'!";
+      LOGGER.warn(msg,e);
+      throw e;
+    }
   }
 }

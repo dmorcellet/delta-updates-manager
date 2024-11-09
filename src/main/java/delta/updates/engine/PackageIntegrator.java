@@ -1,6 +1,7 @@
 package delta.updates.engine;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -103,10 +104,13 @@ public class PackageIntegrator
       File from=new File(packageDir,path);
       File toDir=_localData.getRootDir();
       File to=new File(toDir,path);
-      boolean ok=FileUtils.move(from,to);
-      if (!ok)
+      try
       {
-        throw new IllegalStateException("Cannot rename file "+from+" to "+to);
+        FileUtils.move(from.toPath(),to.toPath());
+      }
+      catch(IOException ioe)
+      {
+        throw new IllegalStateException("Cannot move file "+from+" to "+to, ioe);
       }
     }
     else
