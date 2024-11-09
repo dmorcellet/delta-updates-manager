@@ -1,5 +1,7 @@
 package delta.updates.engine.listener;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * Controller for the update status.
  * <br>
@@ -12,6 +14,8 @@ package delta.updates.engine.listener;
  */
 public class UpdateStatusController
 {
+  private static final org.slf4j.Logger LOGGER=LoggerFactory.getLogger(UpdateStatusController.class);
+
   private UpdateStatusData _status;
   private UpdateStatusListener _listener;
 
@@ -40,6 +44,7 @@ public class UpdateStatusController
    */
   public void setImportStatus(UpdateStatus updateStatus, String message)
   {
+    LOGGER.info("Update status: "+updateStatus+", message="+message);
     _status.setUpdateStatus(updateStatus);
     _status.setStatusMessage(message);
     statusUpdated();

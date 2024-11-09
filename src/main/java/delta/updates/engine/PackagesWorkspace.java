@@ -118,6 +118,7 @@ public class PackagesWorkspace
     };
     DownloadTask task=_downloader.syncDownload(url,packageArchiveFile,listener);
     DownloadState state=task.getDownloadState();
+    LOGGER.info("End of sync download: "+packageArchiveFile+" => "+state);
     boolean ok=(state==DownloadState.OK);
     if (ok)
     {
@@ -177,6 +178,7 @@ public class PackagesWorkspace
   {
     String packageName=packageReference.getName();
     String message="Expanding package '"+packageName+"'";
+    LOGGER.info(message);
     _statusController.setImportStatus(UpdateStatus.RUNNING,message);
     File packageArchiveFile=getPackageArchiveFile(packageReference);
     File rootDir=getPackageRootDir(packageReference);
@@ -185,6 +187,7 @@ public class PackagesWorkspace
     if (ok)
     {
       String endMessage="Expanded package '"+packageName+"'";
+      LOGGER.info(endMessage);
       _statusController.setImportStatus(UpdateStatus.RUNNING,endMessage);
     }
     else
