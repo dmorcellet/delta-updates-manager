@@ -15,7 +15,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delta.updates.engine.UpdateController;
 import delta.updates.engine.listener.UpdateStatus;
@@ -28,6 +32,8 @@ import delta.updates.engine.listener.UpdateStatusListener;
  */
 public class UpdateStatusUIController implements UpdateStatusListener
 {
+  private static final Logger LOGGER=LoggerFactory.getLogger(UpdateStatusUIController.class);
+
   // Controllers
   private UpdateController _updateController;
   // UI
@@ -77,15 +83,23 @@ public class UpdateStatusUIController implements UpdateStatusListener
   public void statusUpdate(UpdateStatusData data)
   {
     // Message
-    String message=data.getStatusMessage();
-    _statusLabel.setText(message);
-    UpdateStatus status=data.getUpdateStatus();
-    _buttonState=getButtonState(status);
-    if (_buttonState!=null)
+    final String message=data.getStatusMessage();
+    final UpdateStatus status=data.getUpdateStatus();
+    Runnable r=new Runnable()
     {
-      String buttonLabel=_buttonState.getLabel();
-      _button.setText(buttonLabel);
-    }
+      public void run()
+      {
+        _statusLabel.setText(message);
+        _buttonState=getButtonState(status);
+        if (_buttonState!=null)
+        {
+          String buttonLabel=_buttonState.getLabel();
+          _button.setText(buttonLabel);
+        }
+        LOGGER.info("Update UI: status="+status+", message="+message+", button state="+_buttonState);
+      }
+    };
+    SwingUtilities.invokeLater(r);
   }
 
   private JDialog buildUI()
