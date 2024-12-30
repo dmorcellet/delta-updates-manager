@@ -199,4 +199,12 @@ public class UpdateEngine
     _workspace.cleanup();
     _downloadsMgr.dispose();
   }
+
+  /**
+   * Request cancellation.
+   */
+  public void requestCancel()
+  {
+    _workspace.cancel();
+  }
 }

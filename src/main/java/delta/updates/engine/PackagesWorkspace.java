@@ -237,6 +237,14 @@ public class PackagesWorkspace
   }
 
   /**
+   * Cancel.
+   */
+  public void cancel()
+  {
+    _downloader.cancel();
+  }
+
+  /**
    * Clean-up.
    */
   public void cleanup()

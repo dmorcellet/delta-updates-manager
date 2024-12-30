@@ -128,7 +128,6 @@ public class UpdateController
    */
   public void cancel()
   {
-    // TODO
-    System.out.println("Cancellation requested!");
+    _engine.requestCancel();
   }
 }
