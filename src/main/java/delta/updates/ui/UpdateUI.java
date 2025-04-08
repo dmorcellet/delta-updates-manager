@@ -49,7 +49,7 @@ public class UpdateUI
       SwingUtilities.invokeAndWait(r);
       return (resultHolder.getInt()==JOptionPane.OK_OPTION);
     }
-    catch(Exception e)
+    catch(Exception e) // NOSONAR
     {
       LOGGER.warn("Caught exception in invokeAndWait!", e);
       return false;

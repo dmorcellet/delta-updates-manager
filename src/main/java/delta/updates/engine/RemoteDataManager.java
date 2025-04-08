@@ -66,7 +66,7 @@ public class RemoteDataManager
       packageUsage.setDetailedDescription(packageDescription);
       return true;
     }
-    LOGGER.warn("Could not find package description for "+packageUsage);
+    LOGGER.warn("Could not find package description for {}",packageUsage);
     return false;
   }
 
@@ -75,7 +75,7 @@ public class RemoteDataManager
     byte[] xmlDoc=downloadData(descriptionURL);
     if (xmlDoc==null)
     {
-      LOGGER.error("Could not download data from: {}", descriptionURL);
+      LOGGER.error("Could not download data from: {}",descriptionURL);
       return null;
     }
     SoftwarePackageDescription ret=parseSoftwarePackageDescription(xmlDoc);

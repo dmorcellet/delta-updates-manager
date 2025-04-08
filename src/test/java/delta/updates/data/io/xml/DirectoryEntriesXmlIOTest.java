@@ -2,6 +2,7 @@ package delta.updates.data.io.xml;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import delta.updates.data.DirectoryEntryDescription;
@@ -23,6 +24,7 @@ class DirectoryEntriesXmlIOTest
     File currentDir=new File(".");
     DirectoryEntryDescription description=builder.build(currentDir);
     File toFile=new File("entries.xml");
-    DirectoryEntriesXmlIO.writeFile(toFile,description);
+    boolean ok=DirectoryEntriesXmlIO.writeFile(toFile,description);
+    Assertions.assertTrue(ok);
   }
 }

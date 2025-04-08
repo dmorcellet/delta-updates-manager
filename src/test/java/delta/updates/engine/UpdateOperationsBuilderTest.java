@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import delta.updates.data.DirectoryEntryDescription;
@@ -44,6 +45,7 @@ class UpdateOperationsBuilderTest
     DirectoryEntryDescription entry2=builder.build(rootDir2);
     UpdateOperationsBuilder diffBuilder=new UpdateOperationsBuilder();
     UpdateOperations operations=diffBuilder.computeDiff(entry1,entry2);
+    Assertions.assertNotNull(operations);
     showOperations(operations);
   }
 

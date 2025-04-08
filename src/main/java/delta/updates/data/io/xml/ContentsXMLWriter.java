@@ -27,7 +27,7 @@ public class ContentsXMLWriter
   {
     AttributesImpl attrs=new AttributesImpl();
     FileDescription source=archivedContents.getDataFile();
-    writeFileAttrs(hd,attrs,source);
+    writeFileAttrs(attrs,source);
     hd.startElement("","",ContentsXMLConstants.ARCHIVE_TAG,attrs);
     for(DirectoryEntryDescription entry : archivedContents.getEntries())
     {
@@ -36,7 +36,7 @@ public class ContentsXMLWriter
     hd.endElement("","",ContentsXMLConstants.ARCHIVE_TAG);
   }
 
-  private static void writeFileAttrs(TransformerHandler hd, AttributesImpl attrs, FileDescription file)
+  private static void writeFileAttrs(AttributesImpl attrs, FileDescription file)
   {
     // path
     String path=EntryUtils.getPath(file);

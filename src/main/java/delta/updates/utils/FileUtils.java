@@ -26,21 +26,14 @@ public class FileUtils
   {
     try
     {
-      if (LOGGER.isDebugEnabled())
-      {
-        LOGGER.debug("Attempt to move '{}' to '{}'...",from,to);
-      }
+      LOGGER.debug("Attempt to move '{}' to '{}'...",from,to);
       Files.move(from,to,StandardCopyOption.REPLACE_EXISTING);
-      if (LOGGER.isInfoEnabled())
-      {
-        LOGGER.info("Moved '{}' to '{}'.",from,to);
-      }
+      LOGGER.info("Moved '{}' to '{}'.",from,to);
     }
     catch(IOException e)
     {
       String msg="Could not move '"+from+"' to '"+to+"'!";
-      LOGGER.warn(msg,e);
-      throw e;
+      throw new IOException(msg,e);
     }
   }
 }

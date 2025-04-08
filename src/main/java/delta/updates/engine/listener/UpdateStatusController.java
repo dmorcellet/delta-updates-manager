@@ -44,7 +44,7 @@ public class UpdateStatusController
    */
   public void setImportStatus(UpdateStatus updateStatus, String message)
   {
-    LOGGER.info("Update status: "+updateStatus+", message="+message);
+    LOGGER.info("Update status: {}, message={}",updateStatus,message);
     _status.setUpdateStatus(updateStatus);
     _status.setStatusMessage(message);
     statusUpdated();

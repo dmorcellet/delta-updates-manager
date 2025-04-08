@@ -36,7 +36,7 @@ public class DirectoryEntriesXMLParser
     {
       return parseFileTag(root);
     }
-    LOGGER.warn("Unmanaged tag: "+tagName);
+    LOGGER.warn("Unmanaged tag: {}",tagName);
     return null;
   }
 

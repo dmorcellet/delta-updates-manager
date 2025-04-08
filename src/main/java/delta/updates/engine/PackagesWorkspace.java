@@ -55,7 +55,7 @@ public class PackagesWorkspace
   {
     SoftwarePackageDescription packageDescription=packageUsage.getDetailedDescription();
     List<String> sourceURLs=packageDescription.getSourceURLs();
-    if (sourceURLs.size()==0)
+    if (sourceURLs.isEmpty())
     {
       // Deletes only, no archive
       return true;
@@ -72,19 +72,19 @@ public class PackagesWorkspace
     }
     if (!ok)
     {
-      LOGGER.info("Could not get package: "+packageReference);
+      LOGGER.warn("Could not get package: {}",packageReference);
       return false;
     }
-    LOGGER.info("Downloaded package: "+packageReference);
+    LOGGER.info("Downloaded package: {}",packageReference);
     ok=checkPackage(packageReference,packageDescription);
     if (!ok)
     {
-      LOGGER.info("Package check failed for: "+packageReference);
+      LOGGER.warn("Package check failed for: {}",packageReference);
       return false;
     }
     // Expand
     ok=expandPackage(packageReference);
-    return true;
+    return ok;
   }
 
   private boolean downloadPackage(SoftwareReference packageReference, String url)
@@ -118,7 +118,7 @@ public class PackagesWorkspace
     };
     DownloadTask task=_downloader.syncDownload(url,packageArchiveFile,listener);
     DownloadState state=task.getDownloadState();
-    LOGGER.info("End of sync download: "+packageArchiveFile+" => "+state);
+    LOGGER.info("End of sync download: {} => {}",packageArchiveFile,state);
     boolean ok=(state==DownloadState.OK);
     if (ok)
     {
@@ -147,7 +147,7 @@ public class PackagesWorkspace
     // - can read
     if (!packageArchiveFile.canRead())
     {
-      LOGGER.error("Cannot read downloaded package '"+packageName+"'");
+      LOGGER.error("Cannot read downloaded package '{}'",packageName);
       return false;
     }
     // - size
@@ -155,7 +155,7 @@ public class PackagesWorkspace
     long downloadedFileSize=packageArchiveFile.length();
     if (downloadedFileSize!=size)
     {
-      LOGGER.error("Bad size for downloadeed package '"+packageName+"': "+downloadedFileSize+"!="+size);
+      LOGGER.error("Bad size for downloadeed package '{}': {}!={}",packageName,Long.valueOf(downloadedFileSize),Long.valueOf(size));
       return false;
     }
     // - CRC
@@ -163,7 +163,7 @@ public class PackagesWorkspace
     long downloadedFileCRC=CRC.computeCRC(packageArchiveFile);
     if (downloadedFileCRC!=crc)
     {
-      LOGGER.error("Bad CRC for downloadeed package '"+packageName+"': "+downloadedFileCRC+"!="+crc);
+      LOGGER.error("Bad CRC for downloadeed package '{}': {}!={}",packageName,Long.valueOf(downloadedFileCRC),Long.valueOf(crc));
       return false;
     }
     return true;
@@ -192,7 +192,7 @@ public class PackagesWorkspace
     }
     else
     {
-      LOGGER.error("Failed to expand package '"+packageName+"'");
+      LOGGER.error("Failed to expand package '{}'",packageName);
     }
     return ok;
   }

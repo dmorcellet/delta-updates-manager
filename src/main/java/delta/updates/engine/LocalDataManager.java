@@ -106,7 +106,7 @@ public class LocalDataManager
       }
       else
       {
-        LOGGER.warn("Could not resolve package ID="+packageID);
+        LOGGER.warn("Could not resolve package ID={}",Integer.valueOf(packageID));
       }
     }
   }

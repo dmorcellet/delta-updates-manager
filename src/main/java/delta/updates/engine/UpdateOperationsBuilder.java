@@ -80,7 +80,7 @@ public class UpdateOperationsBuilder
     }
     else
     {
-      LOGGER.warn("Unsupported entry type: "+entry1);
+      LOGGER.warn("Unsupported entry type: {}",entry1);
     }
   }
 
@@ -124,7 +124,6 @@ public class UpdateOperationsBuilder
     if (crc1!=crc2)
     {
       update(file2);
-      return;
     }
   }
 
@@ -141,10 +140,7 @@ public class UpdateOperationsBuilder
     }
     UpdateOperation operation=new UpdateOperation(OperationType.DELETE,entry);
     _operations.addOperation(operation);
-    if (LOGGER.isDebugEnabled())
-    {
-      LOGGER.debug("Remove entry: "+entry);
-    }
+    LOGGER.debug("Remove entry: {}",entry);
   }
 
   private void add(DirectoryEntryDescription entry)
@@ -159,19 +155,13 @@ public class UpdateOperationsBuilder
     }
     UpdateOperation operation=new UpdateOperation(OperationType.ADD,entry);
     _operations.addOperation(operation);
-    if (LOGGER.isDebugEnabled())
-    {
-      LOGGER.debug("Add entry: "+entry);
-    }
+    LOGGER.debug("Add entry: {}",entry);
   }
 
   private void update(FileDescription newFile)
   {
     UpdateOperation operation=new UpdateOperation(OperationType.UPDATE,newFile);
     _operations.addOperation(operation);
-    if (LOGGER.isDebugEnabled())
-    {
-      LOGGER.debug("Update entry: "+newFile);
-    }
+    LOGGER.debug("Update entry: {}",newFile);
   }
 }

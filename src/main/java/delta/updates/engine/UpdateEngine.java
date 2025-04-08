@@ -109,11 +109,7 @@ public class UpdateEngine
   {
     Version localVersion=local.getVersion();
     Version remoteVersion=remote.getVersion();
-    if (localVersion.getId()>=remoteVersion.getId())
-    {
-      return true;
-    }
-    return false;
+    return (localVersion.getId()>=remoteVersion.getId());
   }
 
   /**

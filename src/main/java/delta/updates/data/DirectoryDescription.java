@@ -36,7 +36,7 @@ public class DirectoryDescription extends DirectoryEntryDescription
    */
   public void removeEntry(String name)
   {
-    DirectoryEntryDescription entry=findByName(name);
+    DirectoryEntryDescription entry=getEntryByName(name);
     removeEntry(entry);
   }
 
@@ -54,23 +54,6 @@ public class DirectoryDescription extends DirectoryEntryDescription
   }
 
   /**
-   * Find an entry using its name.
-   * @param name Name to find.
-   * @return An entry or <code>null</code> if not found.
-   */
-  public DirectoryEntryDescription findByName(String name)
-  {
-    for(DirectoryEntryDescription entry : _entries)
-    {
-      if (entry.getName().equals(name))
-      {
-        return entry;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Find an entry using its path.
    * @param path Path to use.
    * @return An entry or <code>null</code> if not found.
@@ -82,7 +65,7 @@ public class DirectoryDescription extends DirectoryEntryDescription
     {
       // Forward to child directory, if it exists
       String name=path.substring(0,index);
-      DirectoryEntryDescription child=findByName(name);
+      DirectoryEntryDescription child=getEntryByName(name);
       if (child instanceof DirectoryDescription)
       {
         DirectoryDescription childDir=(DirectoryDescription)child;
@@ -93,7 +76,7 @@ public class DirectoryDescription extends DirectoryEntryDescription
     else
     {
       // Direct child
-      return findByName(path);
+      return getEntryByName(path);
     }
     // Not found
     return null;

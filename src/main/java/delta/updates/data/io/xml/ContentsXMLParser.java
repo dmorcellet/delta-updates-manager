@@ -10,7 +10,6 @@ import org.w3c.dom.NamedNodeMap;
 import delta.common.utils.xml.DOMParsingTools;
 import delta.updates.data.ArchivedContents;
 import delta.updates.data.DirectoryEntryDescription;
-import delta.updates.data.EntriesBuilder;
 import delta.updates.data.FileDescription;
 
 /**
@@ -28,30 +27,18 @@ public class ContentsXMLParser
    */
   public static ArchivedContents parseContentsDescriptionTag(Element root)
   {
-    EntriesBuilder entriesBuilder=new EntriesBuilder();
-    return parseContentsDescriptionTag(root,entriesBuilder);
-  }
-
-  /**
-   * Build a contents description from an XML tag.
-   * @param root Root XML tag.
-   * @param entriesBuilder Entries builder.
-   * @return A contents description or <code>null</code>.
-   */
-  private static ArchivedContents parseContentsDescriptionTag(Element root, EntriesBuilder entriesBuilder)
-  {
     String tagName=root.getTagName();
     if (ContentsXMLConstants.ARCHIVE_TAG.equals(tagName))
     {
-      return parseArchiveTag(root,entriesBuilder);
+      return parseArchiveTag(root);
     }
-    LOGGER.warn("Unmanaged tag: "+tagName);
+    LOGGER.warn("Unmanaged tag: {}",tagName);
     return null;
   }
 
-  private static ArchivedContents parseArchiveTag(Element archiveTag, EntriesBuilder entriesBuilder)
+  private static ArchivedContents parseArchiveTag(Element archiveTag)
   {
-    FileDescription source=parseFileAttrs(archiveTag,entriesBuilder);
+    FileDescription source=parseFileAttrs(archiveTag);
     ArchivedContents ret=new ArchivedContents();
     ret.setDataFile(source);
     // Children
@@ -64,7 +51,7 @@ public class ContentsXMLParser
     return ret;
   }
 
-  private static FileDescription parseFileAttrs(Element fileTag, EntriesBuilder entriesBuilder)
+  private static FileDescription parseFileAttrs(Element fileTag)
   {
     NamedNodeMap attrs=fileTag.getAttributes();
     FileDescription file=new FileDescription();

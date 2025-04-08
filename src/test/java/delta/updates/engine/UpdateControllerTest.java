@@ -2,6 +2,7 @@ package delta.updates.engine;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,8 +17,10 @@ class UpdateControllerTest
   @Test
   void testUpdate()
   {
-    UpdateController ctrl=new UpdateController();
-    File rootAppDir=new File("d:/tmp/lc15");
-    ctrl.doIt(rootAppDir);
+    Assertions.assertDoesNotThrow(() -> {
+      UpdateController ctrl=new UpdateController();
+      File rootAppDir=new File("d:/tmp/lc15");
+      ctrl.doIt(rootAppDir);
+    });
   }
 }

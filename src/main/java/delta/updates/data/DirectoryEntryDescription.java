@@ -12,7 +12,7 @@ public abstract class DirectoryEntryDescription
   /**
    * Constructor.
    */
-  public DirectoryEntryDescription()
+  protected DirectoryEntryDescription()
   {
     _name="";
   }

@@ -96,7 +96,7 @@ public class UpdateStatusUIController implements UpdateStatusListener
           String buttonLabel=_buttonState.getLabel();
           _button.setText(buttonLabel);
         }
-        LOGGER.info("Update UI: status="+status+", message="+message+", button state="+_buttonState);
+        LOGGER.info("Update UI: status={}, message={}, button state={}",status,message,_buttonState);
       }
     };
     SwingUtilities.invokeLater(r);

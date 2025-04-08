@@ -23,6 +23,8 @@ import delta.updates.utils.DescriptionBuilder;
  */
 public class PackagesBuilder
 {
+  private static final String FILE_VARIABLE="${file}";
+
   private File _from;
   private ToolsConfig _config;
 
@@ -46,7 +48,7 @@ public class PackagesBuilder
   {
     // Update software description
     String baseURL=_config.getBaseURL();
-    String urlOfDescription=baseURL.replace("${file}","software.xml");
+    String urlOfDescription=baseURL.replace(FILE_VARIABLE,"software.xml");
     software.setDescriptionURL(urlOfDescription);
     for(SoftwarePackageDescription packageDescription : packages)
     {
@@ -56,12 +58,12 @@ public class PackagesBuilder
       ArchivedContents contents=packageDescription.getContents();
       if (contents!=null)
       {
-        String packageSourceURL=baseURL.replace("${file}","packages/"+packageId+".zip");
+        String packageSourceURL=baseURL.replace(FILE_VARIABLE,"packages/"+packageId+".zip");
         packageDescription.addSourceURL(packageSourceURL);
       }
       // Usage
       SoftwarePackageUsage usage=new SoftwarePackageUsage(packageDescription.getReference());
-      String packageDescriptionURL=baseURL.replace("${file}","packages/"+packageId+".xml");
+      String packageDescriptionURL=baseURL.replace(FILE_VARIABLE,"packages/"+packageId+".xml");
       usage.setDescriptionURL(packageDescriptionURL);
       usage.setDetailedDescription(packageDescription);
       software.addPackage(usage);
@@ -110,7 +112,7 @@ public class PackagesBuilder
         parent.removeEntry(directoryEntry.getName());
       }
       // Build archive
-      contents=buildArchivedContents(packageID,packageName,directoryEntry);
+      contents=buildArchivedContents(packageID,directoryEntry);
     }
     // Build package
     SoftwarePackageDescription packageDescription=new SoftwarePackageDescription();
@@ -121,7 +123,7 @@ public class PackagesBuilder
     return packageDescription;
   }
 
-  private ArchivedContents buildArchivedContents(int packageID, String packageName, DirectoryDescription sourceDescription)
+  private ArchivedContents buildArchivedContents(int packageID, DirectoryDescription sourceDescription)
   {
     ArchivedContents ret=new ArchivedContents();
     // Build archive file
